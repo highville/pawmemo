@@ -57,5 +57,5 @@ export async function signUp(formData: FormData) {
     redirect(`/auth/sign-up?error=${encodeURIComponent(error.message)}`);
   }
 
-  redirect("/auth/sign-in?message=Check your email to confirm your account.");
+  redirect("/auth/sign-in?message=Account created. Please sign in to continue.");
 }
