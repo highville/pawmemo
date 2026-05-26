@@ -1,6 +1,8 @@
 import { ArrowRight, Camera, Cat, Dog, Heart, Smartphone } from "lucide-react";
+import Link from "next/link";
 import { Card, PageHeader } from "@/components/ui";
 import { createPet } from "@/app/onboarding/actions";
+import { getCurrentUser, getFirstPet } from "@/lib/app-data";
 
 type OnboardingPageProps = {
   searchParams?: Promise<{
@@ -10,6 +12,8 @@ type OnboardingPageProps = {
 
 export default async function OnboardingPage({ searchParams }: OnboardingPageProps) {
   const params = await searchParams;
+  const { user } = await getCurrentUser();
+  const existingPet = user ? await getFirstPet(user.id) : null;
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-8 bg-background px-6 py-10">
@@ -18,7 +22,7 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
       </div>
       <PageHeader
         title="Welcome to PawMemo"
-        body="A gentle space to hold your cherished moments with Momo forever."
+        body="A gentle space to hold your cherished moments together."
       />
       <Card className="space-y-3">
         <div className="flex items-center gap-2 font-semibold text-primary">
@@ -28,6 +32,15 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
         <p className="text-sm leading-6 text-outline">Add PawMemo to your home screen for the best experience.</p>
       </Card>
       {params?.error ? <p className="rounded-2xl bg-red-50 p-4 text-sm font-semibold text-error">{params.error}</p> : null}
+      {existingPet ? (
+        <Card className="space-y-4 bg-primary-soft/70">
+          <h2 className="font-display text-2xl font-semibold text-primary">{existingPet.name} is already set up</h2>
+          <p className="leading-7 text-outline">You can start saving memories now. Pet editing will come later, but your journal is ready.</p>
+          <Link href="/app" className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90">
+            Go to journal <ArrowRight size={18} />
+          </Link>
+        </Card>
+      ) : (
       <form action={createPet} className="flex flex-1 flex-col gap-7">
         <label className="space-y-2">
           <span className="text-sm font-semibold text-outline">Pet Name</span>
@@ -54,13 +67,14 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
         </div>
         <div className="flex aspect-square max-h-72 flex-col items-center justify-center rounded-2xl border border-dashed border-outline/40 bg-surface-soft text-center">
           <Camera className="mb-4 text-primary" size={42} />
-          <p className="font-semibold text-primary">Upload a photo of Momo</p>
+          <p className="font-semibold text-primary">Pet photo placeholder</p>
           <p className="mt-2 text-sm text-outline">Static placeholder for Phase 1</p>
         </div>
         <button className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90">
           Create Momo&apos;s memory space <ArrowRight size={18} />
         </button>
       </form>
+      )}
     </main>
   );
 }

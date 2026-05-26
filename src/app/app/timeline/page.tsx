@@ -1,23 +1,21 @@
 import { Search } from "lucide-react";
+import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
 import { MemoryCard } from "@/components/memory-card";
 import { Card, PageHeader } from "@/components/ui";
 import { getCurrentUser, getFirstPet, getUserMemories, toAppMemory } from "@/lib/app-data";
-import { memories, pet } from "@/lib/mock-data";
 
 export default async function TimelinePage() {
   const { user } = await getCurrentUser();
   const realPet = user ? await getFirstPet(user.id) : null;
   const realMemories = user ? (await getUserMemories(user.id)).map(toAppMemory) : [];
-  const displayPetName = realPet?.name ?? pet.name;
-  const displayPetAvatar = realPet?.avatar_url ?? pet.avatar;
-  const displayMemories = realMemories.length > 0 ? realMemories : memories;
+  const displayPetName = realPet?.name ?? "your pet";
 
   return (
-    <AppShell active="timeline" petName={displayPetName} petAvatar={displayPetAvatar}>
+    <AppShell active="timeline" petName={displayPetName} petAvatar={realPet?.avatar_url ?? null}>
       <PageHeader
         title="Memory Timeline"
-        body={`A chronological sanctuary of your moments with ${displayPetName}.`}
+        body={realPet ? `A chronological sanctuary of your moments with ${displayPetName}.` : "Your saved notes will live here after you create a pet profile."}
       />
       <section className="relative">
         <Search className="absolute left-0 top-1/2 -translate-y-1/2 text-outline" size={20} />
@@ -26,14 +24,25 @@ export default async function TimelinePage() {
           placeholder="Search memories, symptoms, or moments"
         />
       </section>
-      {realMemories.length === 0 ? (
+      {!realPet ? (
+        <Card className="bg-primary-soft/70">
+          <h2 className="font-display text-2xl font-semibold text-primary">Create a pet profile first</h2>
+          <p className="mt-2 leading-7 text-outline">Timeline entries are connected to a pet, so start with the companion this journal belongs to.</p>
+          <Link href="/onboarding" className="mt-5 inline-flex rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white">
+            Create pet profile
+          </Link>
+        </Card>
+      ) : realMemories.length === 0 ? (
         <Card className="bg-primary-soft/70">
           <h2 className="font-display text-2xl font-semibold text-primary">No saved memories yet</h2>
-          <p className="mt-2 leading-7 text-outline">Your real notes will appear here after you save them from Home. Sample memories are shown below so the layout still feels familiar.</p>
+          <p className="mt-2 leading-7 text-outline">Start with one quick note from Home. Your first saved memory will appear here right away.</p>
+          <Link href="/app" className="mt-5 inline-flex rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white">
+            Write first note
+          </Link>
         </Card>
       ) : null}
       <div className="relative space-y-6 before:absolute before:left-5 before:top-0 before:h-full before:w-px before:bg-surface-line md:before:left-1/2">
-        {displayMemories.map((memory, index) => {
+        {realMemories.map((memory, index) => {
           const Icon = memory.icon;
           return (
             <div key={memory.id} className="relative pl-14 md:grid md:grid-cols-2 md:gap-12 md:pl-0">

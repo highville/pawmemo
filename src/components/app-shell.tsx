@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { BarChart3, Grid3X3, Heart, Home, Settings, ScrollText } from "lucide-react";
+import { BarChart3, Grid3X3, Heart, Home, PawPrint, Settings, ScrollText } from "lucide-react";
 import { pet } from "@/lib/mock-data";
 
 const navItems = [
@@ -40,13 +40,17 @@ export function TopBar({
   petName?: string;
   petAvatar?: string | null;
 }) {
-  const avatar = petAvatar ?? pet.avatar;
-
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-transparent bg-background/75 px-6 py-3 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between">
         <Link href="/app" className="flex items-center gap-3">
-          <Image src={avatar} alt={`${petName} avatar`} width={40} height={40} className="h-10 w-10 rounded-full object-cover" />
+          {petAvatar ? (
+            <Image src={petAvatar} alt={`${petName} avatar`} width={40} height={40} className="h-10 w-10 rounded-full object-cover" />
+          ) : (
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-soft text-primary">
+              <PawPrint size={19} />
+            </span>
+          )}
           <span className="hidden font-display text-2xl font-semibold text-primary md:block">PawMemo</span>
         </Link>
         <Link href="/app" className="font-display text-2xl font-semibold text-primary md:hidden">

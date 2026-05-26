@@ -22,11 +22,11 @@ export async function createMemory(formData: FormData) {
   const tag = String(formData.get("tag") ?? "Memory").trim() || "Memory";
 
   if (!pet) {
-    redirect("/onboarding");
+    redirect("/app?error=Create a pet profile before saving memories.");
   }
 
   if (!body) {
-    redirect("/app?error=Memory text is required.");
+    redirect("/app?error=Write a little note before saving.");
   }
 
   const { error } = await supabase.from("memories").insert({
@@ -38,12 +38,12 @@ export async function createMemory(formData: FormData) {
   });
 
   if (error) {
-    redirect(`/app?error=${encodeURIComponent(error.message)}`);
+    redirect("/app?error=We couldn't save that memory. Please try again.");
   }
 
   revalidatePath("/app");
   revalidatePath("/app/timeline");
-  redirect("/app");
+  redirect("/app?saved=1");
 }
 
 function makeMemoryTitle(body: string) {

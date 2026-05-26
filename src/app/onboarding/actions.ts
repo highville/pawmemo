@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { ensureProfile } from "@/lib/app-data";
+import { ensureProfile, getFirstPet } from "@/lib/app-data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function createPet(formData: FormData) {
@@ -16,11 +16,17 @@ export async function createPet(formData: FormData) {
 
   await ensureProfile(user.id, user.email ?? null);
 
+  const existingPet = await getFirstPet(user.id);
+
+  if (existingPet) {
+    redirect("/app");
+  }
+
   const name = String(formData.get("name") ?? "").trim();
   const species = String(formData.get("species") ?? "Other").trim();
 
   if (!name) {
-    redirect("/onboarding?error=Pet name is required.");
+    redirect("/onboarding?error=Add your pet's name to continue.");
   }
 
   const { error } = await supabase.from("pets").insert({
@@ -30,7 +36,7 @@ export async function createPet(formData: FormData) {
   });
 
   if (error) {
-    redirect(`/onboarding?error=${encodeURIComponent(error.message)}`);
+    redirect("/onboarding?error=We couldn't create that pet profile. Please try again.");
   }
 
   redirect("/app");

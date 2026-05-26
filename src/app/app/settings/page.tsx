@@ -1,19 +1,31 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Download, Edit3, Home, LogOut, Star, Trash2 } from "lucide-react";
+import { Download, Edit3, Home, LogOut, PawPrint, Star, Trash2 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { Card, PageHeader } from "@/components/ui";
-import { pet } from "@/lib/mock-data";
+import { getCurrentUser, getFirstPet } from "@/lib/app-data";
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  const { user } = await getCurrentUser();
+  const currentPet = user ? await getFirstPet(user.id) : null;
+  const petName = currentPet?.name ?? "No pet yet";
+  const petAvatar = currentPet?.avatar_url ?? null;
+  const email = user?.email ?? "Signed in user";
+
   return (
-    <AppShell active="settings">
+    <AppShell active="settings" petName={petName} petAvatar={petAvatar}>
       <PageHeader title="Settings" />
       <Card className="space-y-6">
         <h2 className="font-display text-2xl font-semibold text-primary">Pet Profile</h2>
         <div className="flex flex-col items-center gap-3">
           <div className="relative">
-            <Image src={pet.avatar} alt={pet.name} width={96} height={96} className="h-24 w-24 rounded-full object-cover" />
+            {petAvatar ? (
+              <Image src={petAvatar} alt={petName} width={96} height={96} className="h-24 w-24 rounded-full object-cover" />
+            ) : (
+              <span className="flex h-24 w-24 items-center justify-center rounded-full bg-primary-soft text-primary">
+                <PawPrint size={34} />
+              </span>
+            )}
             <button className="absolute bottom-0 right-0 rounded-full bg-primary p-2 text-white" aria-label="Edit photo">
               <Edit3 size={14} />
             </button>
@@ -21,12 +33,9 @@ export default function SettingsPage() {
         </div>
         <label className="block">
           <span className="text-sm font-semibold text-outline">Name</span>
-          <input className="mt-1 w-full border-0 border-b border-outline/30 bg-transparent px-0 py-2 text-primary focus:border-primary focus:ring-0" defaultValue={pet.name} />
+          <input readOnly className="mt-1 w-full border-0 border-b border-outline/30 bg-transparent px-0 py-2 text-primary focus:border-primary focus:ring-0" value={petName} />
         </label>
-        <label className="block">
-          <span className="text-sm font-semibold text-outline">Birthday</span>
-          <input className="mt-1 w-full border-0 border-b border-outline/30 bg-transparent px-0 py-2 text-primary focus:border-primary focus:ring-0" type="date" defaultValue={pet.birthday} />
-        </label>
+        {!currentPet ? <p className="text-sm font-semibold text-outline">Create a pet profile from onboarding to connect settings to your journal.</p> : null}
       </Card>
       <Card className="space-y-5">
         <h2 className="font-display text-2xl font-semibold text-primary">Account</h2>
@@ -40,7 +49,7 @@ export default function SettingsPage() {
         <div className="flex items-center justify-between">
           <span>
             <span className="block font-semibold text-primary">Email</span>
-            <span className="text-outline">{pet.email}</span>
+            <span className="text-outline">{email}</span>
           </span>
           <Edit3 className="text-outline" size={18} />
         </div>
