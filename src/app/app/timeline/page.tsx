@@ -1,15 +1,23 @@
 import { Search } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { MemoryCard } from "@/components/memory-card";
-import { PageHeader } from "@/components/ui";
+import { Card, PageHeader } from "@/components/ui";
+import { getCurrentUser, getFirstPet, getUserMemories, toAppMemory } from "@/lib/app-data";
 import { memories, pet } from "@/lib/mock-data";
 
-export default function TimelinePage() {
+export default async function TimelinePage() {
+  const { user } = await getCurrentUser();
+  const realPet = user ? await getFirstPet(user.id) : null;
+  const realMemories = user ? (await getUserMemories(user.id)).map(toAppMemory) : [];
+  const displayPetName = realPet?.name ?? pet.name;
+  const displayPetAvatar = realPet?.avatar_url ?? pet.avatar;
+  const displayMemories = realMemories.length > 0 ? realMemories : memories;
+
   return (
-    <AppShell active="timeline">
+    <AppShell active="timeline" petName={displayPetName} petAvatar={displayPetAvatar}>
       <PageHeader
         title="Memory Timeline"
-        body={`A chronological sanctuary of your moments with ${pet.name}.`}
+        body={`A chronological sanctuary of your moments with ${displayPetName}.`}
       />
       <section className="relative">
         <Search className="absolute left-0 top-1/2 -translate-y-1/2 text-outline" size={20} />
@@ -18,8 +26,14 @@ export default function TimelinePage() {
           placeholder="Search memories, symptoms, or moments"
         />
       </section>
+      {realMemories.length === 0 ? (
+        <Card className="bg-primary-soft/70">
+          <h2 className="font-display text-2xl font-semibold text-primary">No saved memories yet</h2>
+          <p className="mt-2 leading-7 text-outline">Your real notes will appear here after you save them from Home. Sample memories are shown below so the layout still feels familiar.</p>
+        </Card>
+      ) : null}
       <div className="relative space-y-6 before:absolute before:left-5 before:top-0 before:h-full before:w-px before:bg-surface-line md:before:left-1/2">
-        {memories.map((memory, index) => {
+        {displayMemories.map((memory, index) => {
           const Icon = memory.icon;
           return (
             <div key={memory.id} className="relative pl-14 md:grid md:grid-cols-2 md:gap-12 md:pl-0">

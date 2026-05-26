@@ -1,9 +1,16 @@
 import Image from "next/image";
 import { Clock } from "lucide-react";
-import type { memories } from "@/lib/mock-data";
+import type { ComponentType } from "react";
 import { Card } from "@/components/ui";
 
-type Memory = (typeof memories)[number];
+type Memory = {
+  title: string;
+  body: string;
+  time: string;
+  tag: string;
+  image: string | null;
+  icon: ComponentType<{ size?: number; className?: string }>;
+};
 
 export function MemoryCard({ memory }: { memory: Memory }) {
   const Icon = memory.icon;

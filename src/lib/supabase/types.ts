@@ -25,6 +25,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       pets: {
         Row: {
@@ -57,6 +58,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       memories: {
         Row: {
@@ -95,6 +97,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       tags: {
         Row: {
@@ -118,6 +121,7 @@ export type Database = {
           category?: string | null;
           created_at?: string;
         };
+        Relationships: [];
       };
       memory_tags: {
         Row: {
@@ -138,6 +142,7 @@ export type Database = {
           owner_id?: string;
           created_at?: string;
         };
+        Relationships: [];
       };
       care_signals: {
         Row: {
@@ -173,6 +178,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
     };
     Views: Record<string, never>;

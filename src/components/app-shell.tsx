@@ -13,14 +13,18 @@ const navItems = [
 
 export function AppShell({
   children,
-  active
+  active,
+  petName = pet.name,
+  petAvatar = pet.avatar
 }: {
   children: React.ReactNode;
   active?: string;
+  petName?: string;
+  petAvatar?: string | null;
 }) {
   return (
     <div className="min-h-dvh bg-background pb-28">
-      <TopBar />
+      <TopBar petName={petName} petAvatar={petAvatar} />
       <main className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-6 pt-24 md:px-12 md:pt-32">
         {children}
       </main>
@@ -29,12 +33,20 @@ export function AppShell({
   );
 }
 
-export function TopBar() {
+export function TopBar({
+  petName = pet.name,
+  petAvatar = pet.avatar
+}: {
+  petName?: string;
+  petAvatar?: string | null;
+}) {
+  const avatar = petAvatar ?? pet.avatar;
+
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-transparent bg-background/75 px-6 py-3 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between">
         <Link href="/app" className="flex items-center gap-3">
-          <Image src={pet.avatar} alt={`${pet.name} avatar`} width={40} height={40} className="h-10 w-10 rounded-full object-cover" />
+          <Image src={avatar} alt={`${petName} avatar`} width={40} height={40} className="h-10 w-10 rounded-full object-cover" />
           <span className="hidden font-display text-2xl font-semibold text-primary md:block">PawMemo</span>
         </Link>
         <Link href="/app" className="font-display text-2xl font-semibold text-primary md:hidden">
