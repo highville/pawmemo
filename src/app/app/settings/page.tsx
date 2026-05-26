@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Download, Edit3, Home, Star, Trash2 } from "lucide-react";
+import { Download, Edit3, Home, LogOut, Star, Trash2 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { Card, PageHeader } from "@/components/ui";
 import { pet } from "@/lib/mock-data";
@@ -57,6 +57,11 @@ export default function SettingsPage() {
           <Download />
           Export all memories
         </button>
+        <div className="mx-4 h-px bg-surface-line" />
+        <Link href="/auth/sign-out" className="flex w-full items-center gap-4 rounded-xl p-4 text-left text-primary hover:bg-surface-soft">
+          <LogOut />
+          Sign out
+        </Link>
         <div className="mx-4 h-px bg-surface-line" />
         <button className="flex w-full items-center gap-4 rounded-xl p-4 text-left text-outline hover:bg-red-50 hover:text-error">
           <Trash2 />
