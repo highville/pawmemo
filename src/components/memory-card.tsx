@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Clock } from "lucide-react";
 import type { ComponentType } from "react";
 import { Card } from "@/components/ui";
@@ -33,7 +32,7 @@ export function MemoryCard({ memory }: { memory: Memory }) {
       </div>
       {memory.image ? (
         <div className="relative h-56 overflow-hidden rounded-xl">
-          <Image src={memory.image} alt={memory.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 640px" />
+          <img src={memory.image} alt={memory.title} className="h-full w-full object-cover" />
         </div>
       ) : null}
     </Card>

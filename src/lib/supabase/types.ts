@@ -99,6 +99,42 @@ export type Database = {
         };
         Relationships: [];
       };
+      memory_assets: {
+        Row: {
+          id: string;
+          owner_id: string;
+          pet_id: string;
+          memory_id: string;
+          storage_bucket: string;
+          storage_path: string;
+          mime_type: string | null;
+          file_size: number | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id: string;
+          pet_id: string;
+          memory_id: string;
+          storage_bucket: string;
+          storage_path: string;
+          mime_type?: string | null;
+          file_size?: number | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          owner_id?: string;
+          pet_id?: string;
+          memory_id?: string;
+          storage_bucket?: string;
+          storage_path?: string;
+          mime_type?: string | null;
+          file_size?: number | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       tags: {
         Row: {
           id: string;

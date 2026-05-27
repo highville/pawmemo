@@ -4,6 +4,10 @@ import type { Database } from "@/lib/supabase/types";
 
 export type PetRow = Database["public"]["Tables"]["pets"]["Row"];
 export type MemoryRow = Database["public"]["Tables"]["memories"]["Row"];
+export type MemoryAssetRow = Database["public"]["Tables"]["memory_assets"]["Row"];
+type MemoryWithImage = MemoryRow & {
+  signedImageUrl?: string | null;
+};
 
 export type AppMemory = {
   id: string;
@@ -60,17 +64,57 @@ export async function getUserMemories(ownerId: string) {
     .eq("owner_id", ownerId)
     .order("occurred_at", { ascending: false });
 
-  return data ?? [];
+  const memories = data ?? [];
+
+  if (memories.length === 0) {
+    return [];
+  }
+
+  const { data: assets, error } = await supabase
+    .from("memory_assets")
+    .select("*")
+    .eq("owner_id", ownerId)
+    .in(
+      "memory_id",
+      memories.map((memory) => memory.id)
+    )
+    .order("created_at", { ascending: true });
+
+  if (error || !assets?.length) {
+    return memories;
+  }
+
+  const signedUrls = new Map<string, string>();
+  await Promise.all(
+    assets.map(async (asset) => {
+      if (signedUrls.has(asset.memory_id)) {
+        return;
+      }
+
+      const { data: signed } = await supabase.storage
+        .from(asset.storage_bucket)
+        .createSignedUrl(asset.storage_path, 60 * 60);
+
+      if (signed?.signedUrl) {
+        signedUrls.set(asset.memory_id, signed.signedUrl);
+      }
+    })
+  );
+
+  return memories.map((memory) => ({
+    ...memory,
+    signedImageUrl: signedUrls.get(memory.id) ?? null
+  }));
 }
 
-export function toAppMemory(memory: MemoryRow): AppMemory {
+export function toAppMemory(memory: MemoryWithImage): AppMemory {
   return {
     id: memory.id,
     title: memory.title,
     body: memory.body,
     time: formatMemoryTime(memory.occurred_at),
     tag: memory.mood ?? "Memory",
-    image: memory.image_url,
+    image: memory.signedImageUrl ?? memory.image_url,
     icon: PawPrint
   };
 }

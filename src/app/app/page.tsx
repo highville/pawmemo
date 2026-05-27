@@ -67,9 +67,11 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           ))}
         </div>
         <div className="flex items-center gap-3">
-          <button type="button" className="rounded-full bg-surface-muted p-3 text-primary" aria-label="Add image">
+          <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-surface-muted px-3 py-3 text-xs font-semibold text-primary" aria-label="Add photo">
             <ImagePlus size={20} />
-          </button>
+            <span className="hidden sm:inline">Add photo</span>
+            <input name="photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif" disabled={!realPet} className="sr-only" />
+          </label>
           <input name="body" disabled={!realPet} className="min-w-0 flex-1 border-0 border-b border-outline/40 bg-transparent px-0 py-3 focus:border-primary focus:ring-0 disabled:opacity-50" placeholder={realPet ? "Share a moment..." : "Create a pet first"} />
           <button type="submit" disabled={!realPet} className="rounded-full bg-primary p-3 text-white disabled:opacity-50" aria-label="Send">
             <Send size={18} />
