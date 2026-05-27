@@ -7,7 +7,7 @@ type Memory = {
   title: string;
   body: string;
   time: string;
-  tag: string;
+  tag: string | null;
   image: string | null;
   icon: ComponentType<{ size?: number; className?: string }>;
 };
@@ -18,10 +18,14 @@ export function MemoryCard({ memory }: { memory: Memory }) {
   return (
     <Card className="space-y-4">
       <div className="flex items-start justify-between gap-4">
-        <div className="flex items-center gap-2 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary">
-          <Icon size={14} />
-          {memory.tag}
-        </div>
+        {memory.tag ? (
+          <div className="flex items-center gap-2 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary">
+            <Icon size={14} />
+            {memory.tag}
+          </div>
+        ) : (
+          <div />
+        )}
         <div className="flex items-center gap-1 text-xs font-semibold text-outline">
           <Clock size={14} />
           {memory.time}

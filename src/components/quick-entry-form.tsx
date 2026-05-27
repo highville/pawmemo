@@ -6,6 +6,7 @@ import { useFormStatus } from "react-dom";
 
 const ALLOWED_PHOTO_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MAX_PHOTO_SIZE = 5 * 1024 * 1024;
+const QUICK_TAGS = ["Cute moment", "First time", "Ate less", "Vet visit"];
 
 type QuickEntryFormProps = {
   action: (formData: FormData) => void;
@@ -18,6 +19,7 @@ export function QuickEntryForm({ action, hasPet }: QuickEntryFormProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [photoName, setPhotoName] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
   useEffect(() => {
     return () => {
@@ -94,11 +96,17 @@ export function QuickEntryForm({ action, hasPet }: QuickEntryFormProps) {
   return (
     <form action={action} onSubmit={handleSubmit} className="sticky bottom-28 z-30 rounded-2xl border border-surface-line bg-surface/90 p-4 shadow-lift backdrop-blur md:bottom-8">
       <div className="hide-scrollbar mb-3 flex gap-2 overflow-x-auto">
-        {["Cute moment", "First time", "Ate less", "Vet visit"].map((chip, index) => (
-          <label key={chip} className="whitespace-nowrap rounded-full border border-surface-line bg-background px-4 py-2 text-xs font-semibold text-primary">
-            <input name="tag" type="radio" value={chip} defaultChecked={index === 0} className="sr-only" />
+        <input type="hidden" name="tag" value={selectedTag ?? ""} />
+        {QUICK_TAGS.map((chip) => (
+          <button
+            key={chip}
+            type="button"
+            aria-pressed={selectedTag === chip}
+            onClick={() => setSelectedTag((current) => (current === chip ? null : chip))}
+            className="whitespace-nowrap rounded-full border border-surface-line bg-background px-4 py-2 text-xs font-semibold text-primary transition aria-pressed:border-secondary aria-pressed:bg-secondary-soft aria-pressed:text-secondary"
+          >
             {chip}
-          </label>
+          </button>
         ))}
       </div>
       {previewUrl ? (

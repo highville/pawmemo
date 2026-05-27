@@ -8,6 +8,10 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 const MEMORY_PHOTOS_BUCKET = "memory-photos";
 const MAX_PHOTO_SIZE = 5 * 1024 * 1024;
 const ALLOWED_PHOTO_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+const CARE_SIGNAL_TAGS: Record<string, string> = {
+  "Ate less": "appetite",
+  "Vet visit": "vet"
+};
 
 export async function createMemory(formData: FormData) {
   const supabase = await createSupabaseServerClient();
@@ -23,7 +27,7 @@ export async function createMemory(formData: FormData) {
 
   const pet = await getFirstPet(user.id);
   const body = String(formData.get("body") ?? "").trim();
-  const tag = String(formData.get("tag") ?? "Memory").trim() || "Memory";
+  const tag = normalizeTag(formData.get("tag"));
   const photo = formData.get("photo");
   const photoFile = photo instanceof File && photo.size > 0 ? photo : null;
 
@@ -59,6 +63,51 @@ export async function createMemory(formData: FormData) {
 
   if (error || !memory) {
     redirect("/app?error=We couldn't save that memory. Please try again.");
+  }
+
+  if (tag) {
+    const { data: tagRow, error: tagError } = await supabase
+      .from("tags")
+      .upsert(
+        {
+          owner_id: user.id,
+          name: tag,
+          category: "quick"
+        },
+        { onConflict: "owner_id,name,category" }
+      )
+      .select("id")
+      .single();
+
+    if (tagError || !tagRow) {
+      redirect("/app?error=Memory saved, but the tag could not be attached. Please try again later.");
+    }
+
+    const { error: memoryTagError } = await supabase.from("memory_tags").insert({
+      owner_id: user.id,
+      memory_id: memory.id,
+      tag_id: tagRow.id
+    });
+
+    if (memoryTagError) {
+      redirect("/app?error=Memory saved, but the tag could not be attached. Please try again later.");
+    }
+
+    const careSignalType = CARE_SIGNAL_TAGS[tag];
+
+    if (careSignalType) {
+      const { error: careSignalError } = await supabase.from("care_signals").insert({
+        owner_id: user.id,
+        pet_id: pet.id,
+        memory_id: memory.id,
+        signal_type: careSignalType,
+        note: `Manual tag: ${tag}. Note: ${memoryBody}`
+      });
+
+      if (careSignalError) {
+        redirect("/app?error=Memory saved, but the care note could not be attached. Please try again later.");
+      }
+    }
   }
 
   if (photoFile) {
@@ -111,6 +160,16 @@ function makeMemoryTitle(body: string) {
   }
 
   return `${firstLine.slice(0, 45)}...`;
+}
+
+function normalizeTag(value: FormDataEntryValue | null) {
+  const tag = String(value ?? "").trim();
+
+  if (!tag) {
+    return null;
+  }
+
+  return tag.slice(0, 48);
 }
 
 function getPhotoExtension(file: File) {
