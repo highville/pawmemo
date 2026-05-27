@@ -1,6 +1,7 @@
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import { createMemory } from "@/app/app/actions";
+import { suggestMemoryTags } from "@/app/app/ai-actions";
 import { AppShell } from "@/components/app-shell";
 import { MemoryCard } from "@/components/memory-card";
 import { QuickEntryForm } from "@/components/quick-entry-form";
@@ -58,7 +59,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           </div>
         ) : null}
       </div>
-      <QuickEntryForm action={createMemory} hasPet={Boolean(realPet)} />
+      <QuickEntryForm action={createMemory} suggestAction={suggestMemoryTags} hasPet={Boolean(realPet)} />
     </AppShell>
   );
 }

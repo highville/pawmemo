@@ -1,8 +1,9 @@
 "use client";
 
-import { ImagePlus, Loader2, Send, X } from "lucide-react";
-import { type ChangeEvent, type FormEvent, useEffect, useRef, useState } from "react";
+import { ImagePlus, Loader2, Send, Sparkles, X } from "lucide-react";
+import { type ChangeEvent, type FormEvent, useEffect, useRef, useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
+import type { TagSuggestionResult } from "@/app/app/ai-actions";
 
 const ALLOWED_PHOTO_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MAX_PHOTO_SIZE = 5 * 1024 * 1024;
@@ -10,16 +11,20 @@ const QUICK_TAGS = ["Cute moment", "First time", "Ate less", "Vet visit"];
 
 type QuickEntryFormProps = {
   action: (formData: FormData) => void;
+  suggestAction: (input: { memoryText: string; selectedTag?: string | null }) => Promise<TagSuggestionResult>;
   hasPet: boolean;
 };
 
-export function QuickEntryForm({ action, hasPet }: QuickEntryFormProps) {
+export function QuickEntryForm({ action, suggestAction, hasPet }: QuickEntryFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const bodyInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [photoName, setPhotoName] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [careSignals, setCareSignals] = useState<string[]>([]);
+  const [isSuggesting, startSuggesting] = useTransition();
 
   useEffect(() => {
     return () => {
@@ -93,6 +98,29 @@ export function QuickEntryForm({ action, hasPet }: QuickEntryFormProps) {
     setMessage(null);
   }
 
+  function handleSuggestTags() {
+    const memoryText = bodyInputRef.current?.value.trim() ?? "";
+
+    setSuggestions([]);
+    setCareSignals([]);
+
+    startSuggesting(async () => {
+      const result = await suggestAction({
+        memoryText,
+        selectedTag
+      });
+
+      if (!result.ok) {
+        setMessage(result.message ?? "AI suggestions are unavailable right now. You can still save manually.");
+        return;
+      }
+
+      setMessage(null);
+      setSuggestions(result.suggestedTags.filter((tag) => tag !== selectedTag));
+      setCareSignals(result.careSignalCandidates);
+    });
+  }
+
   return (
     <form action={action} onSubmit={handleSubmit} className="sticky bottom-28 z-30 rounded-2xl border border-surface-line bg-surface/90 p-4 shadow-lift backdrop-blur md:bottom-8">
       <div className="hide-scrollbar mb-3 flex gap-2 overflow-x-auto">
@@ -122,6 +150,31 @@ export function QuickEntryForm({ action, hasPet }: QuickEntryFormProps) {
         </div>
       ) : null}
       {message ? <p className="mb-3 rounded-2xl bg-red-50 p-3 text-sm font-semibold text-error">{message}</p> : null}
+      {suggestions.length > 0 || careSignals.length > 0 ? (
+        <div className="mb-3 rounded-2xl border border-secondary-soft bg-secondary-soft/30 p-3">
+          {suggestions.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {suggestions.map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() => setSelectedTag(tag)}
+                  className="rounded-full bg-surface px-3 py-2 text-xs font-semibold text-secondary"
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          ) : null}
+          {careSignals.length > 0 ? (
+            <div className="mt-3 space-y-1 text-xs leading-5 text-outline">
+              {careSignals.map((signal) => (
+                <p key={signal}>{signal}</p>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
       <div className="flex items-center gap-3">
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-surface-muted px-3 py-3 text-xs font-semibold text-primary" aria-label="Add photo">
           <ImagePlus size={20} />
@@ -129,6 +182,9 @@ export function QuickEntryForm({ action, hasPet }: QuickEntryFormProps) {
           <input ref={fileInputRef} name="photo" type="file" accept="image/jpeg,image/png,image/webp" disabled={!hasPet} onChange={handlePhotoChange} className="sr-only" />
         </label>
         <input ref={bodyInputRef} name="body" disabled={!hasPet} className="min-w-0 flex-1 border-0 border-b border-outline/40 bg-transparent px-0 py-3 focus:border-primary focus:ring-0 disabled:opacity-50" placeholder={hasPet ? "Share a moment..." : "Create a pet first"} />
+        <button type="button" onClick={handleSuggestTags} disabled={!hasPet || isSuggesting} className="rounded-full bg-secondary-soft p-3 text-secondary disabled:opacity-50" aria-label="Suggest tags">
+          {isSuggesting ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
+        </button>
         <SubmitButton disabled={!hasPet} />
       </div>
     </form>
