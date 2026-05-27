@@ -56,7 +56,7 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
             ].map((item, index) => {
               const Icon = item.icon;
               return (
-                <label key={item.label} className={`flex items-center gap-2 rounded-full border px-5 py-3 text-sm font-semibold ${index === 1 ? "border-secondary bg-secondary-soft text-secondary" : "border-transparent bg-surface-muted text-outline"}`}>
+                <label key={item.label} className="flex cursor-pointer items-center gap-2 rounded-full border border-transparent bg-surface-muted px-5 py-3 text-sm font-semibold text-outline transition has-[:checked]:border-secondary has-[:checked]:bg-secondary-soft has-[:checked]:text-secondary">
                   <input name="species" type="radio" value={item.label} defaultChecked={index === 1} className="sr-only" />
                   <Icon size={17} />
                   {item.label}
@@ -65,10 +65,10 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
             })}
           </div>
         </div>
-        <div className="flex aspect-square max-h-72 flex-col items-center justify-center rounded-2xl border border-dashed border-outline/40 bg-surface-soft text-center">
-          <Camera className="mb-4 text-primary" size={42} />
-          <p className="font-semibold text-primary">Pet photo placeholder</p>
-          <p className="mt-2 text-sm text-outline">Static placeholder for Phase 1</p>
+        <div className="flex aspect-square max-h-72 flex-col items-center justify-center rounded-2xl border border-dashed border-outline/30 bg-surface-soft px-6 text-center">
+          <Camera className="mb-4 text-outline" size={42} />
+          <p className="font-semibold text-primary">Profile photo coming later</p>
+          <p className="mt-2 text-sm leading-6 text-outline">You can add memories with photos after creating your pet.</p>
         </div>
         <button className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90">
           Create Momo&apos;s memory space <ArrowRight size={18} />
