@@ -1,8 +1,9 @@
-import { ImagePlus, Send, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import { createMemory } from "@/app/app/actions";
 import { AppShell } from "@/components/app-shell";
 import { MemoryCard } from "@/components/memory-card";
+import { QuickEntryForm } from "@/components/quick-entry-form";
 import { Card } from "@/components/ui";
 import { getCurrentUser, getFirstPet, getUserMemories, toAppMemory } from "@/lib/app-data";
 
@@ -57,27 +58,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           </div>
         ) : null}
       </div>
-      <form action={createMemory} className="sticky bottom-28 z-30 rounded-2xl border border-surface-line bg-surface/90 p-4 shadow-lift backdrop-blur md:bottom-8">
-        <div className="hide-scrollbar mb-3 flex gap-2 overflow-x-auto">
-          {["Cute moment", "First time", "Ate less", "Vet visit"].map((chip, index) => (
-            <label key={chip} className="whitespace-nowrap rounded-full border border-surface-line bg-background px-4 py-2 text-xs font-semibold text-primary">
-              <input name="tag" type="radio" value={chip} defaultChecked={index === 0} className="sr-only" />
-              {chip}
-            </label>
-          ))}
-        </div>
-        <div className="flex items-center gap-3">
-          <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-surface-muted px-3 py-3 text-xs font-semibold text-primary" aria-label="Add photo">
-            <ImagePlus size={20} />
-            <span className="hidden sm:inline">Add photo</span>
-            <input name="photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif" disabled={!realPet} className="sr-only" />
-          </label>
-          <input name="body" disabled={!realPet} className="min-w-0 flex-1 border-0 border-b border-outline/40 bg-transparent px-0 py-3 focus:border-primary focus:ring-0 disabled:opacity-50" placeholder={realPet ? "Share a moment..." : "Create a pet first"} />
-          <button type="submit" disabled={!realPet} className="rounded-full bg-primary p-3 text-white disabled:opacity-50" aria-label="Send">
-            <Send size={18} />
-          </button>
-        </div>
-      </form>
+      <QuickEntryForm action={createMemory} hasPet={Boolean(realPet)} />
     </AppShell>
   );
 }

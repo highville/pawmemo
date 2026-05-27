@@ -6,8 +6,8 @@ import { ensureProfile, getFirstPet } from "@/lib/app-data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const MEMORY_PHOTOS_BUCKET = "memory-photos";
-const MAX_PHOTO_SIZE = 10 * 1024 * 1024;
-const ALLOWED_PHOTO_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
+const MAX_PHOTO_SIZE = 5 * 1024 * 1024;
+const ALLOWED_PHOTO_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 export async function createMemory(formData: FormData) {
   const supabase = await createSupabaseServerClient();
@@ -31,25 +31,27 @@ export async function createMemory(formData: FormData) {
     redirect("/app?error=Create a pet profile before saving memories.");
   }
 
-  if (!body) {
-    redirect("/app?error=Write a little note before saving.");
+  if (!body && !photoFile) {
+    redirect("/app?error=Write a little note or add a photo before saving.");
   }
 
   if (photoFile && !ALLOWED_PHOTO_TYPES.has(photoFile.type)) {
-    redirect("/app?error=Please choose a JPG, PNG, WebP, or GIF photo.");
+    redirect("/app?error=Please choose a JPG, PNG, or WebP photo.");
   }
 
   if (photoFile && photoFile.size > MAX_PHOTO_SIZE) {
-    redirect("/app?error=Please choose a photo under 10 MB.");
+    redirect("/app?error=Please choose a photo under 5 MB.");
   }
+
+  const memoryBody = body || "Photo memory";
 
   const { data: memory, error } = await supabase
     .from("memories")
     .insert({
       owner_id: user.id,
       pet_id: pet.id,
-      title: makeMemoryTitle(body),
-      body,
+      title: makeMemoryTitle(memoryBody),
+      body: memoryBody,
       mood: tag
     })
     .select("id")
@@ -114,7 +116,7 @@ function makeMemoryTitle(body: string) {
 function getPhotoExtension(file: File) {
   const extension = file.name.split(".").pop()?.toLowerCase();
 
-  if (extension && ["jpg", "jpeg", "png", "webp", "gif"].includes(extension)) {
+  if (extension && ["jpg", "jpeg", "png", "webp"].includes(extension)) {
     return extension === "jpeg" ? "jpg" : extension;
   }
 
@@ -123,8 +125,6 @@ function getPhotoExtension(file: File) {
       return "png";
     case "image/webp":
       return "webp";
-    case "image/gif":
-      return "gif";
     default:
       return "jpg";
   }

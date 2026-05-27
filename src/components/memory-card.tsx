@@ -1,5 +1,6 @@
 import { Clock } from "lucide-react";
 import type { ComponentType } from "react";
+import { MemoryPhoto } from "@/components/memory-photo";
 import { Card } from "@/components/ui";
 
 type Memory = {
@@ -30,11 +31,7 @@ export function MemoryCard({ memory }: { memory: Memory }) {
         <h2 className="font-display text-2xl font-semibold text-primary">{memory.title}</h2>
         <p className="mt-2 leading-7 text-ink">{memory.body}</p>
       </div>
-      {memory.image ? (
-        <div className="relative h-56 overflow-hidden rounded-xl">
-          <img src={memory.image} alt={memory.title} className="h-full w-full object-cover" />
-        </div>
-      ) : null}
+      {memory.image ? <MemoryPhoto src={memory.image} alt={memory.title} /> : null}
     </Card>
   );
 }
