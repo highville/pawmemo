@@ -216,6 +216,48 @@ export type Database = {
         };
         Relationships: [];
       };
+      ai_usage_events: {
+        Row: {
+          id: string;
+          owner_id: string;
+          feature: string;
+          provider: string;
+          model: string;
+          input_tokens: number | null;
+          output_tokens: number | null;
+          total_tokens: number | null;
+          success: boolean;
+          error_code: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id: string;
+          feature: string;
+          provider: string;
+          model: string;
+          input_tokens?: number | null;
+          output_tokens?: number | null;
+          total_tokens?: number | null;
+          success?: boolean;
+          error_code?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          owner_id?: string;
+          feature?: string;
+          provider?: string;
+          model?: string;
+          input_tokens?: number | null;
+          output_tokens?: number | null;
+          total_tokens?: number | null;
+          success?: boolean;
+          error_code?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

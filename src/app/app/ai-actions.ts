@@ -1,5 +1,14 @@
 "use server";
 
+import {
+  AI_PROVIDER,
+  AI_TAG_SUGGESTION_FEATURE,
+  AI_TAG_SUGGESTION_MODEL,
+  estimateAICostUsd,
+  logAIUsageEvent
+} from "@/lib/ai-usage";
+import { getCurrentUser } from "@/lib/app-data";
+
 const QUICK_TAGS = ["Cute moment", "First time", "Ate less", "Vet visit"];
 const MAX_MEMORY_TEXT_LENGTH = 1200;
 
@@ -14,9 +23,26 @@ export async function suggestMemoryTags(input: {
   memoryText: string;
   selectedTag?: string | null;
 }): Promise<TagSuggestionResult> {
+  const { user } = await getCurrentUser();
+
+  if (!user) {
+    return {
+      ok: false,
+      message: "Please sign in before asking PawMemo for suggestions.",
+      suggestedTags: [],
+      careSignalCandidates: []
+    };
+  }
+
   const apiKey = process.env.OPENAI_API_KEY;
 
   if (!apiKey) {
+    await logTagSuggestionUsage({
+      ownerId: user.id,
+      success: false,
+      errorCode: "missing_api_key"
+    });
+
     return {
       ok: false,
       message: "AI suggestions are not set up yet. You can keep saving memories manually.",
@@ -45,7 +71,7 @@ export async function suggestMemoryTags(input: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "gpt-4.1-mini",
+        model: AI_TAG_SUGGESTION_MODEL,
         instructions: [
           "You suggest gentle memory tags for a private pet journaling app.",
           "Do not diagnose. Do not give medical advice. Do not infer disease.",
@@ -94,6 +120,12 @@ export async function suggestMemoryTags(input: {
     });
 
     if (!response.ok) {
+      await logTagSuggestionUsage({
+        ownerId: user.id,
+        success: false,
+        errorCode: `provider_http_${response.status}`
+      });
+
       return {
         ok: false,
         message: "AI suggestions are unavailable right now. You can still save this memory manually.",
@@ -103,9 +135,17 @@ export async function suggestMemoryTags(input: {
     }
 
     const payload = await response.json();
+    const usage = extractUsage(payload);
     const parsed = parseResponseJson(payload);
 
     if (!parsed) {
+      await logTagSuggestionUsage({
+        ownerId: user.id,
+        success: false,
+        errorCode: "invalid_response",
+        ...usage
+      });
+
       return {
         ok: false,
         message: "AI suggestions came back in an unexpected format. You can still save this memory manually.",
@@ -114,12 +154,24 @@ export async function suggestMemoryTags(input: {
       };
     }
 
+    await logTagSuggestionUsage({
+      ownerId: user.id,
+      success: true,
+      ...usage
+    });
+
     return {
       ok: true,
       suggestedTags: normalizeTags(parsed.suggestedTags),
       careSignalCandidates: normalizeCareSignals(parsed.careSignalCandidates)
     };
   } catch {
+    await logTagSuggestionUsage({
+      ownerId: user.id,
+      success: false,
+      errorCode: "request_failed"
+    });
+
     return {
       ok: false,
       message: "AI suggestions are unavailable right now. You can still save this memory manually.",
@@ -127,6 +179,66 @@ export async function suggestMemoryTags(input: {
       careSignalCandidates: []
     };
   }
+}
+
+async function logTagSuggestionUsage(input: {
+  ownerId: string;
+  success: boolean;
+  errorCode?: string | null;
+  inputTokens?: number | null;
+  outputTokens?: number | null;
+  totalTokens?: number | null;
+}) {
+  await logAIUsageEvent({
+    ownerId: input.ownerId,
+    feature: AI_TAG_SUGGESTION_FEATURE,
+    provider: AI_PROVIDER,
+    model: AI_TAG_SUGGESTION_MODEL,
+    inputTokens: input.inputTokens,
+    outputTokens: input.outputTokens,
+    totalTokens: input.totalTokens,
+    success: input.success,
+    errorCode: input.errorCode
+  });
+
+  estimateAICostUsd({
+    model: AI_TAG_SUGGESTION_MODEL,
+    inputTokens: input.inputTokens,
+    outputTokens: input.outputTokens,
+    totalTokens: input.totalTokens
+  });
+}
+
+function extractUsage(payload: unknown) {
+  if (!payload || typeof payload !== "object" || !("usage" in payload)) {
+    return {};
+  }
+
+  const usage = payload.usage;
+
+  if (!usage || typeof usage !== "object") {
+    return {};
+  }
+
+  const inputTokens = readNumber(usage, "input_tokens");
+  const outputTokens = readNumber(usage, "output_tokens");
+  const totalTokens = readNumber(usage, "total_tokens") ?? (inputTokens !== null || outputTokens !== null ? (inputTokens ?? 0) + (outputTokens ?? 0) : null);
+
+  return {
+    inputTokens,
+    outputTokens,
+    totalTokens
+  };
+}
+
+function readNumber(value: object, key: string) {
+  if (!(key in value)) {
+    return null;
+  }
+
+  const raw = value[key as keyof typeof value];
+
+  return typeof raw === "number" ? raw : null;
 }
 
 function parseResponseJson(payload: unknown) {
