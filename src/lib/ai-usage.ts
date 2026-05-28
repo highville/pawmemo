@@ -5,6 +5,8 @@ export const OPENAI_NANO_MODEL = "gpt-5-nano";
 export const OPENAI_FALLBACK_MINI_MODEL = "gpt-4.1-mini";
 export const AI_TAG_SUGGESTION_MODEL = OPENAI_NANO_MODEL;
 export const AI_TAG_SUGGESTION_FEATURE = "tag_suggestions";
+export const AI_WEEKLY_PAW_LETTER_MODEL = OPENAI_NANO_MODEL;
+export const AI_WEEKLY_PAW_LETTER_FEATURE = "weekly_paw_letter";
 
 type UsageTokens = {
   inputTokens?: number | null;
