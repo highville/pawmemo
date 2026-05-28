@@ -7,6 +7,8 @@ export const AI_TAG_SUGGESTION_MODEL = OPENAI_NANO_MODEL;
 export const AI_TAG_SUGGESTION_FEATURE = "tag_suggestions";
 export const AI_WEEKLY_PAW_LETTER_MODEL = OPENAI_NANO_MODEL;
 export const AI_WEEKLY_PAW_LETTER_FEATURE = "weekly_paw_letter";
+export const AI_VET_READY_SUMMARY_MODEL = OPENAI_NANO_MODEL;
+export const AI_VET_READY_SUMMARY_FEATURE = "vet_ready_summary";
 
 type UsageTokens = {
   inputTokens?: number | null;
