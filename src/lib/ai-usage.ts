@@ -1,7 +1,9 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const AI_PROVIDER = "openai";
-export const AI_TAG_SUGGESTION_MODEL = "gpt-4.1-mini";
+export const OPENAI_NANO_MODEL = "gpt-5-nano";
+export const OPENAI_FALLBACK_MINI_MODEL = "gpt-4.1-mini";
+export const AI_TAG_SUGGESTION_MODEL = OPENAI_NANO_MODEL;
 export const AI_TAG_SUGGESTION_FEATURE = "tag_suggestions";
 
 type UsageTokens = {
@@ -25,7 +27,10 @@ type Pricing = {
 };
 
 const MODEL_PRICING_USD: Record<string, Pricing> = {
-  // Conservative placeholder until PawMemo finalizes the production model choice.
+  "gpt-5-nano": {
+    inputPerMillion: 0.05,
+    outputPerMillion: 0.4
+  },
   "gpt-4.1-mini": {
     inputPerMillion: 0.8,
     outputPerMillion: 3.2
