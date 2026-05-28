@@ -14,6 +14,7 @@ export default async function WeeklyLetterPage() {
   const photoMemoryCount = recentMemories.filter((memory) => memory.signedImageUrl || memory.image_url).length;
   const taggedMemoryCount = recentMemories.filter((memory) => memory.savedTag).length;
   const canGenerate = Boolean(pet && recentMemories.length > 0);
+  const dateRange = formatDateRange(since, new Date());
 
   return (
     <AppShell active="reports">
@@ -71,13 +72,28 @@ export default async function WeeklyLetterPage() {
             <div className="space-y-2">
               <h2 className="font-display text-2xl font-semibold text-primary">Ready when you are</h2>
               <p className="leading-7 text-outline">
-                PawMemo will use recent text notes and tags. Photo memories may be mentioned, but images are not analyzed.
+                PawMemo will use recent text notes and tags from {dateRange}. Photo memories may be mentioned, but images are not analyzed.
               </p>
             </div>
-            <WeeklyLetterGenerator action={generateWeeklyPawLetter} disabled={!canGenerate} />
+            <WeeklyLetterGenerator
+              action={generateWeeklyPawLetter}
+              disabled={!canGenerate}
+              dateRange={dateRange}
+              memoryCount={recentMemories.length}
+              photoMemoryCount={photoMemoryCount}
+            />
           </Card>
         </>
       ) : null}
     </AppShell>
   );
+}
+
+function formatDateRange(start: Date, end: Date) {
+  const formatter = new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric"
+  });
+
+  return `${formatter.format(start)} - ${formatter.format(end)}`;
 }
