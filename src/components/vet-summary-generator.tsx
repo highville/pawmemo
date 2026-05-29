@@ -112,6 +112,12 @@ export function VetSummaryGenerator({
         </p>
       ) : null}
 
+      {result?.ok ? (
+        <p className={`rounded-2xl p-4 text-sm font-semibold leading-6 ${result.message ? "bg-red-50 text-error" : "bg-secondary-soft/40 text-secondary"}`}>
+          {result.message ?? "Saved to report history."}
+        </p>
+      ) : null}
+
       {result?.ok && result.sections ? (
         <Card className="space-y-5 bg-primary-soft/50">
           <div className="space-y-3">

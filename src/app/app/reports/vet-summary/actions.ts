@@ -28,6 +28,7 @@ type VetSummaryPayload = {
 export type VetSummaryResult = {
   ok: boolean;
   message?: string;
+  savedReportId?: string | null;
   sections: {
     overview: string;
     timeline: string[];
@@ -244,8 +245,29 @@ export async function generateVetReadySummary(): Promise<VetSummaryResult> {
       ...usage
     });
 
+    const reportTitle = `Vet-ready Summary for ${pet.name}`;
+    const saveResult = await supabase
+      .from("generated_reports")
+      .insert({
+        owner_id: user.id,
+        pet_id: pet.id,
+        report_type: "vet_ready_summary",
+        title: reportTitle,
+        content: formatVetSummaryContent(reportTitle, sections),
+        period_start: toDateOnly(since),
+        period_end: toDateOnly(new Date()),
+        source_memory_count: memories.length,
+        source_care_signal_count: careSignals?.length ?? 0,
+        included_photo_records: memories.some((memory) => memory.signedImageUrl || memory.image_url),
+        model: AI_VET_READY_SUMMARY_MODEL
+      })
+      .select("id")
+      .single();
+
     return {
       ok: true,
+      message: saveResult.error ? "Summary generated, but it could not be saved to report history yet." : undefined,
+      savedReportId: saveResult.data?.id ?? null,
       sections
     };
   } catch {
@@ -265,6 +287,37 @@ function emptyResult(message: string): VetSummaryResult {
     message,
     sections: null
   };
+}
+
+function formatVetSummaryContent(title: string, sections: NonNullable<VetSummaryResult["sections"]>) {
+  const list = (heading: string, items: string[]) => [
+    heading,
+    ...(items.length > 0 ? items.map((item) => `- ${item}`) : ["- No specific notes in this category."])
+  ].join("\n");
+
+  return [
+    title,
+    "This summary organizes your notes and is not a medical diagnosis.",
+    "",
+    "Overview",
+    sections.overview,
+    "",
+    list("Timeline of notable notes", sections.timeline),
+    "",
+    list("Appetite / eating-related notes", sections.appetiteNotes),
+    "",
+    list("Energy / behavior-related notes", sections.energyBehaviorNotes),
+    "",
+    list("Vet visit-related notes", sections.vetVisitNotes),
+    "",
+    list("Other observations", sections.otherObservations),
+    "",
+    list("Questions to consider asking the vet", sections.questionsForVet)
+  ].join("\n");
+}
+
+function toDateOnly(date: Date) {
+  return date.toISOString().slice(0, 10);
 }
 
 async function logVetSummaryUsage(input: {

@@ -5,6 +5,7 @@ import type { Database } from "@/lib/supabase/types";
 export type PetRow = Database["public"]["Tables"]["pets"]["Row"];
 export type MemoryRow = Database["public"]["Tables"]["memories"]["Row"];
 export type MemoryAssetRow = Database["public"]["Tables"]["memory_assets"]["Row"];
+export type GeneratedReportRow = Database["public"]["Tables"]["generated_reports"]["Row"];
 type MemoryWithImage = MemoryRow & {
   signedImageUrl?: string | null;
   savedTag?: string | null;
@@ -18,6 +19,18 @@ export type AppMemory = {
   tag: string | null;
   image: string | null;
   icon: typeof PawPrint;
+};
+
+export type AppGeneratedReport = {
+  id: string;
+  type: string;
+  title: string;
+  content: string;
+  period: string;
+  createdAt: string;
+  sourceMemoryCount: number | null;
+  sourceCareSignalCount: number | null;
+  includedPhotoRecords: boolean;
 };
 
 export async function getCurrentUser() {
@@ -134,6 +147,30 @@ export async function getUserMemories(ownerId: string) {
   }));
 }
 
+export async function getRecentGeneratedReports(ownerId: string, limit = 5) {
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase
+    .from("generated_reports")
+    .select("*")
+    .eq("owner_id", ownerId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  return (data ?? []).map(toAppGeneratedReport);
+}
+
+export async function getGeneratedReport(ownerId: string, reportId: string) {
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase
+    .from("generated_reports")
+    .select("*")
+    .eq("owner_id", ownerId)
+    .eq("id", reportId)
+    .maybeSingle();
+
+  return data ? toAppGeneratedReport(data) : null;
+}
+
 export function toAppMemory(memory: MemoryWithImage): AppMemory {
   return {
     id: memory.id,
@@ -159,4 +196,37 @@ function formatMemoryTime(value: string) {
     hour: "numeric",
     minute: "2-digit"
   }).format(date);
+}
+
+function toAppGeneratedReport(report: GeneratedReportRow): AppGeneratedReport {
+  return {
+    id: report.id,
+    type: report.report_type === "weekly_paw_letter" ? "Weekly Paw Letter" : "Vet-ready Summary",
+    title: report.title ?? (report.report_type === "weekly_paw_letter" ? "Weekly Paw Letter" : "Vet-ready Summary"),
+    content: report.content,
+    period: formatReportPeriod(report.period_start, report.period_end),
+    createdAt: formatMemoryTime(report.created_at),
+    sourceMemoryCount: report.source_memory_count,
+    sourceCareSignalCount: report.source_care_signal_count,
+    includedPhotoRecords: report.included_photo_records
+  };
+}
+
+function formatReportPeriod(start: string | null, end: string | null) {
+  if (!start || !end) {
+    return "Saved report";
+  }
+
+  const formatter = new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric"
+  });
+  const startDate = new Date(`${start}T00:00:00`);
+  const endDate = new Date(`${end}T00:00:00`);
+
+  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+    return "Saved report";
+  }
+
+  return `${formatter.format(startDate)} - ${formatter.format(endDate)}`;
 }

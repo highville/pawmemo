@@ -25,10 +25,11 @@ export type WeeklyLetterResult = {
   title?: string;
   letter?: string;
   careNotes: string[];
+  savedReportId?: string | null;
 };
 
 export async function generateWeeklyPawLetter(): Promise<WeeklyLetterResult> {
-  const { user } = await getCurrentUser();
+  const { supabase, user } = await getCurrentUser();
 
   if (!user) {
     return {
@@ -205,11 +206,33 @@ export async function generateWeeklyPawLetter(): Promise<WeeklyLetterResult> {
       ...usage
     });
 
+    const fallbackTitle = `A gentle week with ${pet.name}`;
+    const reportTitle = title || fallbackTitle;
+    const saveResult = await supabase
+      .from("generated_reports")
+      .insert({
+        owner_id: user.id,
+        pet_id: pet.id,
+        report_type: "weekly_paw_letter",
+        title: reportTitle,
+        content: formatWeeklyReportContent(reportTitle, letter, careNotes),
+        period_start: toDateOnly(since),
+        period_end: toDateOnly(new Date()),
+        source_memory_count: recentMemories.length,
+        source_care_signal_count: 0,
+        included_photo_records: recentMemories.some((memory) => memory.signedImageUrl || memory.image_url),
+        model: AI_WEEKLY_PAW_LETTER_MODEL
+      })
+      .select("id")
+      .single();
+
     return {
       ok: true,
-      title: title || `A gentle week with ${pet.name}`,
+      title: reportTitle,
       letter,
-      careNotes
+      careNotes,
+      savedReportId: saveResult.data?.id ?? null,
+      message: saveResult.error ? "Letter generated, but it could not be saved to report history yet." : undefined
     };
   } catch {
     await logWeeklyLetterUsage({
@@ -224,6 +247,19 @@ export async function generateWeeklyPawLetter(): Promise<WeeklyLetterResult> {
       careNotes: []
     };
   }
+}
+
+function formatWeeklyReportContent(title: string, letter: string, careNotes: string[]) {
+  return [
+    title,
+    "",
+    letter,
+    ...(careNotes.length > 0 ? ["", "Gentle notes", ...careNotes.map((note) => `- ${note}`)] : [])
+  ].join("\n");
+}
+
+function toDateOnly(date: Date) {
+  return date.toISOString().slice(0, 10);
 }
 
 async function logWeeklyLetterUsage(input: {

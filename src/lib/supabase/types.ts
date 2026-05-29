@@ -258,6 +258,54 @@ export type Database = {
         };
         Relationships: [];
       };
+      generated_reports: {
+        Row: {
+          id: string;
+          owner_id: string;
+          pet_id: string;
+          report_type: string;
+          title: string | null;
+          content: string;
+          period_start: string | null;
+          period_end: string | null;
+          source_memory_count: number | null;
+          source_care_signal_count: number | null;
+          included_photo_records: boolean;
+          model: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id: string;
+          pet_id: string;
+          report_type: string;
+          title?: string | null;
+          content: string;
+          period_start?: string | null;
+          period_end?: string | null;
+          source_memory_count?: number | null;
+          source_care_signal_count?: number | null;
+          included_photo_records?: boolean;
+          model?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          owner_id?: string;
+          pet_id?: string;
+          report_type?: string;
+          title?: string | null;
+          content?: string;
+          period_start?: string | null;
+          period_end?: string | null;
+          source_memory_count?: number | null;
+          source_care_signal_count?: number | null;
+          included_photo_records?: boolean;
+          model?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
