@@ -17,7 +17,7 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
   return (
     <AuthCard
       title="Create your memory space"
-      body="Use email and password while Supabase Auth is being connected."
+      body="Create a private journal for quick notes, photo memories, and gentle weekly recaps."
       footer={
         <>
           Already have an account?{" "}

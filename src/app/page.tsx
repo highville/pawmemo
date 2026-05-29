@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ArrowRight, Grid3X3, Lock, NotebookPen, ScrollText } from "lucide-react";
+import { ArrowRight, Camera, HeartPulse, Lock, NotebookPen, ScrollText } from "lucide-react";
 import { ButtonLink, Card } from "@/components/ui";
 
 export default function LandingPage() {
@@ -7,20 +7,20 @@ export default function LandingPage() {
     <main className="min-h-dvh bg-background">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
         <span className="font-display text-3xl font-semibold text-primary">PawMemo</span>
-        <ButtonLink href="/onboarding" className="px-5 py-2.5">
+        <ButtonLink href="/auth/sign-up" className="px-5 py-2.5">
           Start
         </ButtonLink>
       </header>
       <section className="mx-auto grid max-w-6xl items-center gap-10 px-6 pb-20 pt-10 md:grid-cols-2 md:pt-20">
         <div className="space-y-6">
           <h1 className="font-display text-5xl font-bold leading-tight text-primary md:text-6xl">
-            Save tiny pet moments. Let them become memories.
+            A private memory journal for your pet&apos;s everyday story.
           </h1>
           <p className="max-w-xl text-lg leading-8 text-outline">
-            PawMemo keeps notes, photos, and care signals in one private journal for the small moments you never want to lose.
+            Save quick notes, private photo memories, and gentle care observations. When you want a recap, PawMemo can help turn your notes into weekly letters and vet-ready summaries.
           </p>
-          <ButtonLink href="/onboarding">
-            Start Momo&apos;s journal <ArrowRight size={18} />
+          <ButtonLink href="/auth/sign-up">
+            Start your pet&apos;s journal <ArrowRight size={18} />
           </ButtonLink>
         </div>
         <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-lift">
@@ -33,11 +33,12 @@ export default function LandingPage() {
           />
         </div>
       </section>
-      <section className="mx-auto grid max-w-6xl gap-4 px-6 pb-24 md:grid-cols-3">
+      <section className="mx-auto grid max-w-6xl gap-4 px-6 pb-24 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { title: "Quick notes", icon: NotebookPen, body: "Capture a moment in seconds." },
-          { title: "Memory mosaic", icon: Grid3X3, body: "See a month of moments at a glance." },
-          { title: "Weekly letters", icon: ScrollText, body: "Read a gentle recap of the week." }
+          { title: "Quick notes", icon: NotebookPen, body: "Capture a tiny moment, care note, or funny little detail in seconds." },
+          { title: "Photo memories", icon: Camera, body: "Attach one private photo to a memory and see it again in your timeline." },
+          { title: "Weekly letters", icon: ScrollText, body: "Ask for a warm AI-assisted letter based on the notes you saved." },
+          { title: "Vet-ready summaries", icon: HeartPulse, body: "Organize recent notes for a vet conversation without diagnosis or medical advice." }
         ].map((item) => {
           const Icon = item.icon;
           return (

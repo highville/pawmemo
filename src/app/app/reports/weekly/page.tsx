@@ -21,14 +21,14 @@ export default async function WeeklyLetterPage() {
       <PageHeader
         eyebrow="Weekly Paw Letter"
         title={pet ? `A gentle week with ${pet.name}` : "A gentle weekly letter"}
-        body="Turn the last 7 days of memories into a short, private letter."
+        body="Turn the last 7 days of saved notes into a short, private letter you can read back anytime this session."
       />
 
       {!pet ? (
         <Card className="space-y-4 text-center">
           <h2 className="font-display text-2xl font-semibold text-primary">Create a pet profile first</h2>
           <p className="mx-auto max-w-xl leading-7 text-outline">
-            PawMemo needs one pet profile before it can gather memories into a weekly letter.
+            PawMemo needs one pet profile so it knows whose week it is gathering into a letter.
           </p>
           <ButtonLink href="/onboarding" className="w-full sm:w-auto">
             Create pet profile
@@ -40,7 +40,7 @@ export default async function WeeklyLetterPage() {
         <Card className="space-y-4 text-center">
           <h2 className="font-display text-2xl font-semibold text-primary">No memories from the last 7 days yet</h2>
           <p className="mx-auto max-w-xl leading-7 text-outline">
-            Add a few quick notes this week, then PawMemo can turn them into a warm little letter.
+            Add a few quick notes this week, then PawMemo can help turn them into a warm little letter.
           </p>
           <ButtonLink href="/app" className="w-full sm:w-auto">
             Add a quick memory
@@ -72,7 +72,7 @@ export default async function WeeklyLetterPage() {
             <div className="space-y-2">
               <h2 className="font-display text-2xl font-semibold text-primary">Ready when you are</h2>
               <p className="leading-7 text-outline">
-                PawMemo will use recent text notes and tags from {dateRange}. Photo memories may be mentioned, but images are not analyzed.
+                PawMemo will use recent text notes and tags from {dateRange}. AI generation is optional, photo memories may be mentioned, and images are not analyzed.
               </p>
             </div>
             <WeeklyLetterGenerator

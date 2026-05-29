@@ -21,13 +21,13 @@ export default async function TimelinePage() {
         <Search className="absolute left-0 top-1/2 -translate-y-1/2 text-outline" size={20} />
         <input
           className="w-full border-0 border-b border-primary bg-transparent py-4 pl-8 text-lg text-primary placeholder:text-outline focus:border-primary focus:ring-0"
-          placeholder="Search memories, symptoms, or moments"
+          placeholder="Search notes, tags, or moments"
         />
       </section>
       {!realPet ? (
         <Card className="bg-primary-soft/70">
           <h2 className="font-display text-2xl font-semibold text-primary">Create a pet profile first</h2>
-          <p className="mt-2 leading-7 text-outline">Timeline entries are connected to a pet, so start with the companion this journal belongs to.</p>
+          <p className="mt-2 leading-7 text-outline">Timeline entries are connected to a pet, so start with the companion this private journal belongs to.</p>
           <Link href="/onboarding" className="mt-5 inline-flex rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white">
             Create pet profile
           </Link>

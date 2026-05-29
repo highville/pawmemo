@@ -22,20 +22,20 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
       </div>
       <PageHeader
         title="Welcome to PawMemo"
-        body="A gentle space to hold your cherished moments together."
+        body="Start with one pet profile so every note, photo, and recap stays connected to the right companion."
       />
       <Card className="space-y-3">
         <div className="flex items-center gap-2 font-semibold text-primary">
           <Smartphone size={18} />
-          Keep memories close
+          Your first step
         </div>
-        <p className="text-sm leading-6 text-outline">Add PawMemo to your home screen for the best experience.</p>
+        <p className="text-sm leading-6 text-outline">Create a simple pet profile now. You can start saving memories right after.</p>
       </Card>
       {params?.error ? <p className="rounded-2xl bg-red-50 p-4 text-sm font-semibold text-error">{params.error}</p> : null}
       {existingPet ? (
         <Card className="space-y-4 bg-primary-soft/70">
           <h2 className="font-display text-2xl font-semibold text-primary">{existingPet.name} is already set up</h2>
-          <p className="leading-7 text-outline">You can start saving memories now. Pet editing will come later, but your journal is ready.</p>
+          <p className="leading-7 text-outline">Your journal is ready. Keep adding quick notes and photos from Home whenever something small feels worth remembering.</p>
           <Link href="/app" className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90">
             Go to journal <ArrowRight size={18} />
           </Link>
@@ -68,10 +68,10 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
         <div className="flex aspect-square max-h-72 flex-col items-center justify-center rounded-2xl border border-dashed border-outline/30 bg-surface-soft px-6 text-center">
           <Camera className="mb-4 text-outline" size={42} />
           <p className="font-semibold text-primary">Profile photo coming later</p>
-          <p className="mt-2 text-sm leading-6 text-outline">You can add memories with photos after creating your pet.</p>
+          <p className="mt-2 text-sm leading-6 text-outline">For now, add photos to individual memories after creating your pet.</p>
         </div>
         <button className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90">
-          Create Momo&apos;s memory space <ArrowRight size={18} />
+          Create pet profile <ArrowRight size={18} />
         </button>
       </form>
       )}

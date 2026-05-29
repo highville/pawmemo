@@ -19,7 +19,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
   return (
     <AuthCard
       title="Welcome back"
-      body="Sign in to keep Momo's private notes close."
+      body="Sign in to return to your pet's private journal."
       footer={
         <>
           New to PawMemo?{" "}

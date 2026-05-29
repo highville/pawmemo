@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BarChart3, Grid3X3, Heart, Home, PawPrint, Settings, ScrollText } from "lucide-react";
-import { pet } from "@/lib/mock-data";
 
 const navItems = [
   { href: "/app", label: "Home", icon: Home },
@@ -14,8 +13,8 @@ const navItems = [
 export function AppShell({
   children,
   active,
-  petName = pet.name,
-  petAvatar = pet.avatar
+  petName = "your pet",
+  petAvatar = null
 }: {
   children: React.ReactNode;
   active?: string;
@@ -34,8 +33,8 @@ export function AppShell({
 }
 
 export function TopBar({
-  petName = pet.name,
-  petAvatar = pet.avatar
+  petName = "your pet",
+  petAvatar = null
 }: {
   petName?: string;
   petAvatar?: string | null;

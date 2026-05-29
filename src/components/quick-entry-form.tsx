@@ -200,6 +200,7 @@ export function QuickEntryForm({ action, suggestAction, hasPet }: QuickEntryForm
           </button>
         ))}
       </div>
+      {hasPet ? <p className="mb-3 text-xs font-semibold text-outline">Choose a quick tag if it fits, or use sparkles for optional AI tag ideas.</p> : null}
       {previewUrl ? (
         <div className="mb-3 flex items-center gap-3 rounded-2xl border border-primary-soft bg-primary-soft/40 p-2">
           <img src={previewUrl} alt="Selected memory preview" className="h-16 w-16 rounded-xl object-cover" />

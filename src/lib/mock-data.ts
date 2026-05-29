@@ -81,13 +81,13 @@ export const mosaicDays = Array.from({ length: 31 }, (_, index) => {
 export const reports = [
   {
     title: "Weekly Paw Letter",
-    description: "Your personalized weekly update and stories.",
+    description: "A warm AI-assisted recap from recent saved memories.",
     href: "/app/reports/weekly",
     icon: Mail
   },
   {
     title: "Vet-ready Summary",
-    description: "Health summaries and care signals for Momo.",
+    description: "A neutral note organizer for care-related conversations.",
     href: "/app/reports/vet-summary",
     icon: HeartPulse
   }

@@ -26,10 +26,11 @@ export default async function SettingsPage() {
                 <PawPrint size={34} />
               </span>
             )}
-            <button className="absolute bottom-0 right-0 rounded-full bg-primary p-2 text-white" aria-label="Edit photo">
+            <button disabled className="absolute bottom-0 right-0 rounded-full bg-primary/60 p-2 text-white" aria-label="Profile photo coming later">
               <Edit3 size={14} />
             </button>
           </div>
+          <p className="text-sm font-semibold text-outline">Profile photo upload is coming later.</p>
         </div>
         <label className="block">
           <span className="text-sm font-semibold text-outline">Name</span>
@@ -40,10 +41,10 @@ export default async function SettingsPage() {
       <Card className="space-y-5">
         <h2 className="font-display text-2xl font-semibold text-primary">Account</h2>
         <div className="flex items-center justify-between border-b border-surface-line pb-4">
-          <span className="font-semibold text-primary">Subscription</span>
+          <span className="font-semibold text-primary">Plan</span>
           <Link href="/pricing" className="flex items-center gap-2 rounded-full bg-secondary-soft px-3 py-1 text-sm font-semibold text-secondary">
             <Star size={15} />
-            Plus
+            Early access
           </Link>
         </div>
         <div className="flex items-center justify-between">
@@ -62,9 +63,9 @@ export default async function SettingsPage() {
         </span>
       </Link>
       <Card className="p-2">
-        <button className="flex w-full items-center gap-4 rounded-xl p-4 text-left text-primary hover:bg-surface-soft">
+        <button disabled className="flex w-full cursor-not-allowed items-center gap-4 rounded-xl p-4 text-left text-outline">
           <Download />
-          Export all memories
+          Export all memories coming later
         </button>
         <div className="mx-4 h-px bg-surface-line" />
         <Link href="/auth/sign-out" className="flex w-full items-center gap-4 rounded-xl p-4 text-left text-primary hover:bg-surface-soft">
@@ -72,9 +73,9 @@ export default async function SettingsPage() {
           Sign out
         </Link>
         <div className="mx-4 h-px bg-surface-line" />
-        <button className="flex w-full items-center gap-4 rounded-xl p-4 text-left text-outline hover:bg-red-50 hover:text-error">
+        <button disabled className="flex w-full cursor-not-allowed items-center gap-4 rounded-xl p-4 text-left text-outline">
           <Trash2 />
-          Delete account
+          Account deletion coming later
         </button>
       </Card>
       <footer className="pb-8 text-center text-sm font-semibold text-outline">PawMemo v1.0</footer>

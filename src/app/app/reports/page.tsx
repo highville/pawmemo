@@ -7,7 +7,7 @@ import { reports } from "@/lib/mock-data";
 export default function ReportsPage() {
   return (
     <AppShell active="reports">
-      <PageHeader title="Reports" body="View summaries and letters." />
+      <PageHeader title="Reports" body="Turn saved memories into gentle letters and neutral note summaries when you need them." />
       <div className="grid gap-4">
         {reports.map((report) => {
           const Icon = report.icon;

@@ -28,14 +28,14 @@ export default async function VetSummaryPage() {
       <PageHeader
         eyebrow="Vet-ready Summary"
         title={pet ? `Notes for ${pet.name}'s vet` : "Vet-ready Summary"}
-        body="Organize recent memories and care signals into a neutral summary you can show at a visit."
+        body="Organize recent notes and care signals into a neutral summary you can bring to a conversation with your vet."
       />
 
       {!pet ? (
         <Card className="space-y-4 text-center">
           <h2 className="font-display text-2xl font-semibold text-primary">Create a pet profile first</h2>
           <p className="mx-auto max-w-xl leading-7 text-outline">
-            PawMemo needs one pet profile before it can prepare notes for a vet visit.
+            PawMemo needs one pet profile so the summary is tied to the right companion.
           </p>
           <ButtonLink href="/onboarding" className="w-full sm:w-auto">
             Create pet profile
@@ -47,7 +47,7 @@ export default async function VetSummaryPage() {
         <Card className="space-y-4 text-center">
           <h2 className="font-display text-2xl font-semibold text-primary">No recent notes to summarize yet</h2>
           <p className="mx-auto max-w-xl leading-7 text-outline">
-            Add a few quick memories or care-related tags, then PawMemo can organize them into a neutral summary.
+            Add a few quick memories or care-related tags, then PawMemo can organize your notes into a neutral summary.
           </p>
           <ButtonLink href="/app" className="w-full sm:w-auto">
             Add a quick memory
@@ -79,7 +79,7 @@ export default async function VetSummaryPage() {
             <div className="space-y-2">
               <h2 className="font-display text-2xl font-semibold text-primary">Prepare a neutral summary</h2>
               <p className="leading-7 text-outline">
-                PawMemo will organize notes from {dateRange}. Photo records may be mentioned, but images are not analyzed.
+                PawMemo will organize notes from {dateRange}. Photo records may be mentioned, but images are not analyzed and no diagnosis is generated.
               </p>
               <p className="rounded-2xl bg-secondary-soft/40 p-4 text-sm font-semibold leading-6 text-secondary">
                 This summary organizes your notes and is not a medical diagnosis.
