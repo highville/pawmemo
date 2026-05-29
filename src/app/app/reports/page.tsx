@@ -5,13 +5,21 @@ import { Card, PageHeader } from "@/components/ui";
 import { getCurrentUser, getRecentGeneratedReports } from "@/lib/app-data";
 import { reports } from "@/lib/mock-data";
 
-export default async function ReportsPage() {
+type ReportsPageProps = {
+  searchParams?: Promise<{
+    message?: string;
+  }>;
+};
+
+export default async function ReportsPage({ searchParams }: ReportsPageProps) {
+  const params = await searchParams;
   const { user } = await getCurrentUser();
   const recentReports = user ? await getRecentGeneratedReports(user.id, 4) : [];
 
   return (
     <AppShell active="reports">
       <PageHeader title="Reports" body="Turn saved memories into gentle letters and neutral note summaries when you need them." />
+      {params?.message ? <p className="rounded-2xl bg-secondary-soft p-4 text-sm font-semibold leading-6 text-secondary">{params.message}</p> : null}
       <div className="grid gap-4">
         {reports.map((report) => {
           const Icon = report.icon;

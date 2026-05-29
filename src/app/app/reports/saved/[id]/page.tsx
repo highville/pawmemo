@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { ArrowLeft, Camera, ClipboardList, FileText, Mail } from "lucide-react";
+import { deleteSavedReport } from "@/app/app/reports/saved/[id]/actions";
 import { AppShell } from "@/components/app-shell";
 import { CopyReportButton } from "@/components/copy-report-button";
+import { DeleteReportButton } from "@/components/delete-report-button";
 import { Card, PageHeader } from "@/components/ui";
 import { getCurrentUser, getFirstPet, getGeneratedReport } from "@/lib/app-data";
 
@@ -16,6 +18,7 @@ export default async function SavedReportPage({ params }: SavedReportPageProps) 
   const { user } = await getCurrentUser();
   const pet = user ? await getFirstPet(user.id) : null;
   const report = user ? await getGeneratedReport(user.id, id) : null;
+  const deleteAction = deleteSavedReport.bind(null, id);
 
   return (
     <AppShell active="reports" petName={pet?.name ?? "your pet"} petAvatar={pet?.avatar_url ?? null}>
@@ -78,7 +81,10 @@ export default async function SavedReportPage({ params }: SavedReportPageProps) 
               <p className="whitespace-pre-line text-base leading-8 text-primary">{report.content}</p>
             </div>
 
-            <CopyReportButton content={report.content} />
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <CopyReportButton content={report.content} />
+              <DeleteReportButton action={deleteAction} />
+            </div>
           </Card>
         </>
       )}
