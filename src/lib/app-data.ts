@@ -24,6 +24,7 @@ export type AppMemory = {
 export type AppGeneratedReport = {
   id: string;
   type: string;
+  reportType: string;
   title: string;
   content: string;
   period: string;
@@ -202,6 +203,7 @@ function toAppGeneratedReport(report: GeneratedReportRow): AppGeneratedReport {
   return {
     id: report.id,
     type: report.report_type === "weekly_paw_letter" ? "Weekly Paw Letter" : "Vet-ready Summary",
+    reportType: report.report_type,
     title: report.title ?? (report.report_type === "weekly_paw_letter" ? "Weekly Paw Letter" : "Vet-ready Summary"),
     content: report.content,
     period: formatReportPeriod(report.period_start, report.period_end),

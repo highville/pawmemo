@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { ArrowLeft, Camera, FileText } from "lucide-react";
+import { ArrowLeft, Camera, ClipboardList, FileText, Mail } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
+import { CopyReportButton } from "@/components/copy-report-button";
 import { Card, PageHeader } from "@/components/ui";
 import { getCurrentUser, getFirstPet, getGeneratedReport } from "@/lib/app-data";
 
@@ -32,8 +33,18 @@ export default async function SavedReportPage({ params }: SavedReportPageProps) 
         </>
       ) : (
         <>
-          <PageHeader eyebrow={report.type} title={report.title} body={`${report.period} · saved ${report.createdAt}`} />
+          <PageHeader eyebrow={report.type} title={report.title} body={`${report.period} - saved ${report.createdAt}`} />
           <Card className="space-y-4 bg-primary-soft/50">
+            <div className="flex items-start gap-3 rounded-2xl bg-surface/80 p-4">
+              <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${report.reportType === "weekly_paw_letter" ? "bg-primary-soft text-primary" : "bg-secondary-soft text-secondary"}`}>
+                {report.reportType === "weekly_paw_letter" ? <Mail size={21} /> : <ClipboardList size={21} />}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-outline">{report.type}</p>
+                <p className="mt-1 text-sm font-semibold leading-6 text-outline">{report.period} - saved {report.createdAt}</p>
+              </div>
+            </div>
+
             <div className="flex flex-wrap gap-2">
               {report.sourceMemoryCount !== null ? (
                 <span className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-outline">
@@ -53,6 +64,12 @@ export default async function SavedReportPage({ params }: SavedReportPageProps) 
               ) : null}
             </div>
 
+            {report.reportType === "vet_ready_summary" ? (
+              <p className="rounded-2xl bg-secondary-soft/40 p-4 text-sm font-semibold leading-6 text-secondary">
+                This saved summary organizes your notes and is not a medical diagnosis.
+              </p>
+            ) : null}
+
             <div className="rounded-2xl bg-surface/85 p-5 shadow-ambient">
               <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-outline">
                 <FileText size={16} />
@@ -60,6 +77,8 @@ export default async function SavedReportPage({ params }: SavedReportPageProps) 
               </div>
               <p className="whitespace-pre-line text-base leading-8 text-primary">{report.content}</p>
             </div>
+
+            <CopyReportButton content={report.content} />
           </Card>
         </>
       )}

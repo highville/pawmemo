@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ClipboardList, Mail } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { Card, PageHeader } from "@/components/ui";
 import { getCurrentUser, getRecentGeneratedReports } from "@/lib/app-data";
@@ -41,27 +41,53 @@ export default async function ReportsPage() {
         </div>
         {recentReports.length > 0 ? (
           <div className="grid gap-3">
-            {recentReports.map((report) => (
-              <Link
-                key={report.id}
-                href={`/app/reports/saved/${report.id}`}
-                className="flex items-center gap-4 rounded-2xl border border-surface-line bg-surface p-5 text-left shadow-ambient transition hover:bg-surface-soft"
-              >
-                <span className="min-w-0 flex-1">
-                  <span className="block text-xs font-bold uppercase tracking-[0.16em] text-outline">{report.type}</span>
-                  <span className="mt-1 block truncate font-display text-xl font-semibold text-primary">{report.title}</span>
-                  <span className="mt-1 block text-sm font-semibold text-outline">{report.period} · saved {report.createdAt}</span>
-                </span>
-                <ChevronRight className="shrink-0 text-outline" />
-              </Link>
-            ))}
+            {recentReports.map((report) => {
+              const Icon = report.reportType === "weekly_paw_letter" ? Mail : ClipboardList;
+              const sourceLabel = formatSourceCounts(report.sourceMemoryCount, report.sourceCareSignalCount);
+
+              return (
+                <Link
+                  key={report.id}
+                  href={`/app/reports/saved/${report.id}`}
+                  className="flex items-start gap-4 rounded-2xl border border-surface-line bg-surface p-5 text-left shadow-ambient transition hover:bg-surface-soft"
+                >
+                  <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${report.reportType === "weekly_paw_letter" ? "bg-primary-soft text-primary" : "bg-secondary-soft text-secondary"}`}>
+                    <Icon size={21} />
+                  </span>
+                  <span className="min-w-0 flex-1 space-y-2">
+                    <span className="inline-flex rounded-full bg-surface-muted px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-outline">{report.type}</span>
+                    <span className="block font-display text-xl font-semibold leading-tight text-primary">{report.title}</span>
+                    <span className="block text-sm font-semibold leading-6 text-outline">
+                      {report.period} - saved {report.createdAt}
+                    </span>
+                    {sourceLabel ? <span className="block text-xs font-semibold text-outline">{sourceLabel}</span> : null}
+                  </span>
+                  <ChevronRight className="mt-3 shrink-0 text-outline" />
+                </Link>
+              );
+            })}
           </div>
         ) : (
-          <Card className="bg-surface-soft">
-            <p className="leading-7 text-outline">No saved reports yet. Generate a Weekly Paw Letter or Vet-ready Summary, and it will appear here.</p>
+          <Card className="space-y-2 bg-primary-soft/60">
+            <h3 className="font-display text-2xl font-semibold text-primary">No saved reports yet</h3>
+            <p className="leading-7 text-outline">Generate a Weekly Paw Letter or Vet-ready Summary, and it will appear here for later reading.</p>
           </Card>
         )}
       </section>
     </AppShell>
   );
+}
+
+function formatSourceCounts(memoryCount: number | null, careSignalCount: number | null) {
+  const parts = [];
+
+  if (memoryCount !== null) {
+    parts.push(`${memoryCount} ${memoryCount === 1 ? "memory" : "memories"}`);
+  }
+
+  if (careSignalCount !== null && careSignalCount > 0) {
+    parts.push(`${careSignalCount} care ${careSignalCount === 1 ? "signal" : "signals"}`);
+  }
+
+  return parts.join(" - ");
 }
