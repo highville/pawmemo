@@ -13,7 +13,7 @@ const MAX_MEMORIES_FOR_SUMMARY = 30;
 const MAX_CARE_SIGNALS_FOR_SUMMARY = 30;
 const MAX_MEMORY_BODY_LENGTH = 320;
 const MAX_CARE_NOTE_LENGTH = 220;
-const UNSAFE_SUMMARY_LANGUAGE = /diagnos|disease|illness|treatment|medication|emergency|urgent|infection|cancer|symptom|persist|worsen|medical condition|indicated|this indicates|this suggests|(your pet|pet|momo)\s+may have/i;
+const UNSAFE_SUMMARY_LANGUAGE = /diagnos|disease|illness|treatment|medication|emergency|urgent|infection|cancer|symptom|persist|worsen|medical condition|indicated|advised|suggest any changes|recommend|this indicates|this suggests|(your pet|pet|momo)\s+may have/i;
 
 type VetSummaryPayload = {
   overview?: unknown;

@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, ShieldCheck, Sparkles } from "lucide-react";
+import { Check, Copy, Loader2, ShieldCheck, Sparkles } from "lucide-react";
 import { useState, useTransition } from "react";
 import type { VetSummaryResult } from "@/app/app/reports/vet-summary/actions";
 import { Card } from "@/components/ui";
@@ -37,6 +37,7 @@ export function VetSummaryGenerator({
   photoMemoryCount
 }: VetSummaryGeneratorProps) {
   const [result, setResult] = useState<VetSummaryResult | null>(null);
+  const [copyMessage, setCopyMessage] = useState<string | null>(null);
   const [isGeneratingNow, setIsGeneratingNow] = useState(false);
   const [isPending, startTransition] = useTransition();
   const isGenerating = isPending || isGeneratingNow;
@@ -48,6 +49,7 @@ export function VetSummaryGenerator({
     }
 
     setResult(null);
+    setCopyMessage(null);
     setIsGeneratingNow(true);
 
     startTransition(async () => {
@@ -64,6 +66,19 @@ export function VetSummaryGenerator({
         setIsGeneratingNow(false);
       }
     });
+  }
+
+  async function handleCopy() {
+    if (!result?.ok || !result.sections) {
+      return;
+    }
+
+    try {
+      await copyText(formatSummaryForCopy(result.sections));
+      setCopyMessage("Copied.");
+    } catch {
+      setCopyMessage("Copy failed. You can select the summary text manually.");
+    }
   }
 
   return (
@@ -110,7 +125,7 @@ export function VetSummaryGenerator({
               <h2 className="font-display text-3xl font-semibold leading-tight text-primary">Summary for your vet visit</h2>
               <p className="text-sm leading-6 text-outline">
                 Organized from {memoryCount} {memoryCount === 1 ? "memory" : "memories"} and {careSignalCount} care {careSignalCount === 1 ? "signal" : "signals"}.
-                {photoMemoryCount > 0 ? " Photo records are noted, but images are not analyzed." : ""}
+                {photoMemoryCount > 0 ? " Includes photo records from this period." : ""}
               </p>
             </div>
           </div>
@@ -122,8 +137,20 @@ export function VetSummaryGenerator({
             </div>
             <section className="space-y-2">
               <h3 className="font-display text-2xl font-semibold text-primary">Overview</h3>
-              <p className="leading-7 text-primary">{result.sections.overview}</p>
+              <p className="text-base leading-8 text-primary">{result.sections.overview}</p>
             </section>
+          </div>
+
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-outline/30 bg-surface px-4 py-3 text-sm font-semibold text-primary transition hover:bg-surface-muted sm:w-auto"
+            >
+              {copyMessage === "Copied." ? <Check size={16} /> : <Copy size={16} />}
+              Copy summary
+            </button>
+            {copyMessage ? <p className="text-sm font-semibold text-outline">{copyMessage}</p> : null}
           </div>
 
           <div className="grid gap-4">
@@ -134,9 +161,9 @@ export function VetSummaryGenerator({
                 <section key={key} className="rounded-2xl bg-surface/85 p-5 shadow-ambient">
                   <h3 className="font-display text-xl font-semibold text-primary">{title}</h3>
                   {items.length > 0 ? (
-                    <ul className="mt-3 space-y-3">
+                    <ul className="mt-3 list-disc space-y-3 pl-5">
                       {items.map((item) => (
-                        <li key={item} className="leading-7 text-outline">
+                        <li key={item} className="text-base leading-7 text-outline">
                           {item}
                         </li>
                       ))}
@@ -154,4 +181,63 @@ export function VetSummaryGenerator({
       ) : null}
     </div>
   );
+}
+
+function formatSummaryForCopy(sections: NonNullable<VetSummaryResult["sections"]>) {
+  const list = (title: string, items: string[]) => [
+    title,
+    ...(items.length > 0 ? items.map((item) => `- ${item}`) : ["- No specific notes in this category."])
+  ].join("\n");
+
+  return [
+    "Vet-ready Summary",
+    "This summary organizes your notes and is not a medical diagnosis.",
+    "",
+    "Overview",
+    sections.overview,
+    "",
+    list("Timeline of notable notes", sections.timeline),
+    "",
+    list("Appetite / eating-related notes", sections.appetiteNotes),
+    "",
+    list("Energy / behavior-related notes", sections.energyBehaviorNotes),
+    "",
+    list("Vet visit-related notes", sections.vetVisitNotes),
+    "",
+    list("Other observations", sections.otherObservations),
+    "",
+    list("Questions to consider asking the vet", sections.questionsForVet)
+  ].join("\n");
+}
+
+async function copyText(text: string) {
+  if (navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return;
+    } catch {
+      // Fall back for browser surfaces where the async clipboard API is blocked.
+    }
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "true");
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  textarea.style.opacity = "0";
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+  textarea.setSelectionRange(0, text.length);
+
+  try {
+    const didCopy = document.execCommand("copy");
+
+    if (!didCopy) {
+      throw new Error("Copy command failed.");
+    }
+  } finally {
+    document.body.removeChild(textarea);
+  }
 }
