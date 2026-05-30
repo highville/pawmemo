@@ -25,7 +25,7 @@ export default function PricingPage() {
     <main className="min-h-dvh bg-background px-6 py-10">
       <div className="mx-auto flex max-w-4xl flex-col gap-10">
         <header className="flex items-center justify-between">
-          <ButtonLink href="/app/settings" variant="ghost" className="h-10 w-10 px-0 py-0" aria-label="Close pricing">
+          <ButtonLink href="/" variant="ghost" className="h-10 w-10 px-0 py-0" aria-label="Close pricing">
             <X size={18} />
           </ButtonLink>
           <span className="font-display text-3xl font-semibold text-primary">PawMemo</span>
