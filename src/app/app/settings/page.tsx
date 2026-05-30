@@ -52,16 +52,16 @@ export default async function SettingsPage() {
             <span className="block font-semibold text-primary">Email</span>
             <span className="text-outline">{email}</span>
           </span>
-          <Edit3 className="text-outline" size={18} />
+          <span className="text-sm font-semibold text-outline">Editing coming later</span>
         </div>
       </Card>
-      <Link href="/onboarding" className="flex items-center gap-4 rounded-2xl bg-tertiary p-6 text-white shadow-lift">
+      <div className="flex items-center gap-4 rounded-2xl bg-tertiary/80 p-6 text-white shadow-lift">
         <Home />
         <span>
-          <span className="block font-display text-2xl font-semibold">Add to Home Screen</span>
-          <span className="mt-1 block text-sm leading-6 text-white/75">Keep your memories just a tap away.</span>
+          <span className="block font-display text-2xl font-semibold">Home screen shortcut</span>
+          <span className="mt-1 block text-sm leading-6 text-white/75">Install guidance is coming later. Your journal is ready in this browser now.</span>
         </span>
-      </Link>
+      </div>
       <Card className="p-2">
         <button disabled className="flex w-full cursor-not-allowed items-center gap-4 rounded-xl p-4 text-left text-outline">
           <Download />

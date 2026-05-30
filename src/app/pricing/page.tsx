@@ -1,4 +1,4 @@
-import { ArrowRight, CheckCircle2, Lock, X } from "lucide-react";
+import { CheckCircle2, Lock, X } from "lucide-react";
 import { ButtonLink, Card, PageHeader } from "@/components/ui";
 
 const plans = [
@@ -8,7 +8,7 @@ const plans = [
     body: "Perfect for starting your digital journal journey.",
     features: ["Limited entries", "Basic tags"],
     missing: ["Photo memories", "Weekly letters", "Vet-ready summaries"],
-    cta: "Current Plan"
+    cta: "Included in early access"
   },
   {
     name: "Plus",
@@ -16,7 +16,7 @@ const plans = [
     body: "The complete sanctuary for your pet's life story.",
     features: ["Unlimited entries", "Photo memories", "Weekly letters", "Monthly mosaic", "Vet-ready summaries"],
     missing: [],
-    cta: "Upgrade to Plus"
+    cta: "Payments coming later"
   }
 ];
 
@@ -61,16 +61,15 @@ export default function PricingPage() {
                   </li>
                 ))}
               </ul>
-              <ButtonLink href="/app/settings" variant={index === 1 ? "secondary" : "ghost"} className="w-full">
+              <span className={`inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold ${index === 1 ? "bg-secondary-soft text-secondary" : "border border-outline/40 text-primary"}`}>
                 {plan.cta}
-                {index === 1 ? <ArrowRight size={18} /> : null}
-              </ButtonLink>
+              </span>
             </Card>
           ))}
         </section>
         <p className="flex items-center justify-center gap-2 text-sm font-semibold text-outline">
           <Lock size={15} />
-          Mock pricing only. No payment is implemented in Phase 1.
+          Pricing is a preview. Payments are not available yet.
         </p>
       </div>
     </main>
