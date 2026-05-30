@@ -34,3 +34,84 @@ a {
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+.print-only {
+  display: none;
+}
+
+@media print {
+  html,
+  body {
+    background: #ffffff !important;
+    color: #1b1c1a !important;
+  }
+
+  body {
+    min-height: auto;
+  }
+
+  header,
+  nav,
+  .print-hide {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  main {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  .print-report-header {
+    margin-bottom: 24px;
+    border-bottom: 1px solid #d8d1c4;
+    padding-bottom: 16px;
+  }
+
+  .print-brand {
+    color: #5c513f;
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .print-kicker {
+    margin-top: 16px;
+    color: #6f6658;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .print-report-header h1 {
+    margin: 4px 0 6px;
+    color: #1b1c1a;
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1.2;
+  }
+
+  .print-report-header p {
+    color: #5c5f58;
+  }
+
+  .print-report {
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  .print-report * {
+    box-shadow: none !important;
+  }
+
+  .print-report p {
+    color: #1b1c1a !important;
+  }
+}

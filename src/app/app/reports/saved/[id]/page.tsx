@@ -4,6 +4,7 @@ import { deleteSavedReport } from "@/app/app/reports/saved/[id]/actions";
 import { AppShell } from "@/components/app-shell";
 import { CopyReportButton } from "@/components/copy-report-button";
 import { DeleteReportButton } from "@/components/delete-report-button";
+import { PrintReportButton } from "@/components/print-report-button";
 import { Card, PageHeader } from "@/components/ui";
 import { getCurrentUser, getFirstPet, getGeneratedReport } from "@/lib/app-data";
 
@@ -22,7 +23,7 @@ export default async function SavedReportPage({ params }: SavedReportPageProps) 
 
   return (
     <AppShell active="reports" petName={pet?.name ?? "your pet"} petAvatar={pet?.avatar_url ?? null}>
-      <Link href="/app/reports" className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-outline transition hover:text-primary">
+      <Link href="/app/reports" className="print-hide inline-flex w-fit items-center gap-2 text-sm font-semibold text-outline transition hover:text-primary">
         <ArrowLeft size={16} />
         Back to reports
       </Link>
@@ -36,8 +37,16 @@ export default async function SavedReportPage({ params }: SavedReportPageProps) 
         </>
       ) : (
         <>
-          <PageHeader eyebrow={report.type} title={report.title} body={`${report.period} - saved ${report.createdAt}`} />
-          <Card className="space-y-4 bg-primary-soft/50">
+          <div className="print-report-header print-only">
+            <p className="print-brand">PawMemo</p>
+            <p className="print-kicker">{report.type}</p>
+            <h1>{report.title}</h1>
+            <p>{report.period} - saved {report.createdAt}</p>
+          </div>
+          <div className="print-hide">
+            <PageHeader eyebrow={report.type} title={report.title} body={`${report.period} - saved ${report.createdAt}`} />
+          </div>
+          <Card className="print-report space-y-4 bg-primary-soft/50">
             <div className="flex items-start gap-3 rounded-2xl bg-surface/80 p-4">
               <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${report.reportType === "weekly_paw_letter" ? "bg-primary-soft text-primary" : "bg-secondary-soft text-secondary"}`}>
                 {report.reportType === "weekly_paw_letter" ? <Mail size={21} /> : <ClipboardList size={21} />}
@@ -81,10 +90,11 @@ export default async function SavedReportPage({ params }: SavedReportPageProps) 
               <p className="whitespace-pre-line text-base leading-8 text-primary">{report.content}</p>
             </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="print-hide flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <CopyReportButton content={report.content} />
               <DeleteReportButton action={deleteAction} />
             </div>
+            <PrintReportButton />
           </Card>
         </>
       )}
