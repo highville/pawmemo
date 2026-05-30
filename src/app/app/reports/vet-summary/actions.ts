@@ -4,6 +4,7 @@ import {
   AI_PROVIDER,
   AI_VET_READY_SUMMARY_FEATURE,
   AI_VET_READY_SUMMARY_MODEL,
+  enforceAIQuota,
   estimateAICostUsd,
   logAIUsageEvent
 } from "@/lib/ai-usage";
@@ -68,6 +69,17 @@ export async function generateVetReadySummary(): Promise<VetSummaryResult> {
 
   if (memories.length === 0 && (!careSignals || careSignals.length === 0)) {
     return emptyResult("No recent memories or care notes yet. Add a few quick entries, then come back for a summary.");
+  }
+
+  const quota = await enforceAIQuota({
+    ownerId: user.id,
+    feature: AI_VET_READY_SUMMARY_FEATURE,
+    provider: AI_PROVIDER,
+    model: AI_VET_READY_SUMMARY_MODEL
+  });
+
+  if (!quota.allowed) {
+    return emptyResult("You've reached today's AI summary limit. Your saved notes and reports are still available.");
   }
 
   const apiKey = process.env.OPENAI_API_KEY;

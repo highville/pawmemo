@@ -4,6 +4,7 @@ import {
   AI_PROVIDER,
   AI_WEEKLY_PAW_LETTER_FEATURE,
   AI_WEEKLY_PAW_LETTER_MODEL,
+  enforceAIQuota,
   estimateAICostUsd,
   logAIUsageEvent
 } from "@/lib/ai-usage";
@@ -59,6 +60,21 @@ export async function generateWeeklyPawLetter(): Promise<WeeklyLetterResult> {
     return {
       ok: false,
       message: "No memories from the last 7 days yet. Add a few quick notes, then come back for a letter.",
+      careNotes: []
+    };
+  }
+
+  const quota = await enforceAIQuota({
+    ownerId: user.id,
+    feature: AI_WEEKLY_PAW_LETTER_FEATURE,
+    provider: AI_PROVIDER,
+    model: AI_WEEKLY_PAW_LETTER_MODEL
+  });
+
+  if (!quota.allowed) {
+    return {
+      ok: false,
+      message: "You've reached today's AI letter limit. Your saved memories are still available in Timeline.",
       careNotes: []
     };
   }

@@ -9,6 +9,8 @@ export const AI_WEEKLY_PAW_LETTER_MODEL = OPENAI_NANO_MODEL;
 export const AI_WEEKLY_PAW_LETTER_FEATURE = "weekly_paw_letter";
 export const AI_VET_READY_SUMMARY_MODEL = OPENAI_NANO_MODEL;
 export const AI_VET_READY_SUMMARY_FEATURE = "vet_ready_summary";
+export const DEFAULT_AI_DAILY_CALL_LIMIT = 20;
+export const DEFAULT_AI_MONTHLY_CALL_LIMIT = 100;
 
 type UsageTokens = {
   inputTokens?: number | null;
@@ -28,6 +30,13 @@ type LogAIUsageEventInput = UsageTokens & {
 type Pricing = {
   inputPerMillion: number;
   outputPerMillion: number;
+};
+
+type EnforceAIQuotaInput = {
+  ownerId: string;
+  feature: string;
+  provider: string;
+  model: string;
 };
 
 const MODEL_PRICING_USD: Record<string, Pricing> = {
@@ -60,6 +69,65 @@ export async function logAIUsageEvent(input: LogAIUsageEventInput) {
   }
 }
 
+export async function enforceAIQuota(input: EnforceAIQuotaInput) {
+  const limits = getAIQuotaLimits();
+
+  try {
+    const supabase = await createSupabaseServerClient();
+    const now = new Date();
+    const startOfDay = new Date(now);
+    startOfDay.setHours(0, 0, 0, 0);
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const [{ count: dailyCount }, { count: monthlyCount }] = await Promise.all([
+      supabase
+        .from("ai_usage_events")
+        .select("id", { count: "exact", head: true })
+        .eq("owner_id", input.ownerId)
+        .gte("created_at", startOfDay.toISOString()),
+      supabase
+        .from("ai_usage_events")
+        .select("id", { count: "exact", head: true })
+        .eq("owner_id", input.ownerId)
+        .gte("created_at", startOfMonth.toISOString())
+    ]);
+
+    if ((dailyCount ?? 0) >= limits.daily || (monthlyCount ?? 0) >= limits.monthly) {
+      await logAIUsageEvent({
+        ownerId: input.ownerId,
+        feature: input.feature,
+        provider: input.provider,
+        model: input.model,
+        success: false,
+        errorCode: "quota_exceeded"
+      });
+
+      return {
+        allowed: false,
+        limits,
+        dailyCount: dailyCount ?? 0,
+        monthlyCount: monthlyCount ?? 0
+      };
+    }
+  } catch {
+    // Quota checks should fail open so the app remains usable if usage lookup is temporarily unavailable.
+  }
+
+  return {
+    allowed: true,
+    limits,
+    dailyCount: null,
+    monthlyCount: null
+  };
+}
+
+export function getAIQuotaLimits() {
+  return {
+    daily: readPositiveInteger(process.env.AI_DAILY_CALL_LIMIT, DEFAULT_AI_DAILY_CALL_LIMIT),
+    monthly: readPositiveInteger(process.env.AI_MONTHLY_CALL_LIMIT, DEFAULT_AI_MONTHLY_CALL_LIMIT)
+  };
+}
+
 export function estimateAICostUsd(input: UsageTokens & { model: string }) {
   const pricing = MODEL_PRICING_USD[input.model];
 
@@ -71,4 +139,14 @@ export function estimateAICostUsd(input: UsageTokens & { model: string }) {
   const outputTokens = input.outputTokens ?? 0;
 
   return (inputTokens / 1_000_000) * pricing.inputPerMillion + (outputTokens / 1_000_000) * pricing.outputPerMillion;
+}
+
+function readPositiveInteger(value: string | undefined, fallback: number) {
+  if (!value) {
+    return fallback;
+  }
+
+  const parsed = Number.parseInt(value, 10);
+
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }

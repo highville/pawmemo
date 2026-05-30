@@ -4,6 +4,7 @@ import {
   AI_PROVIDER,
   AI_TAG_SUGGESTION_FEATURE,
   AI_TAG_SUGGESTION_MODEL,
+  enforceAIQuota,
   estimateAICostUsd,
   logAIUsageEvent
 } from "@/lib/ai-usage";
@@ -40,6 +41,34 @@ export async function suggestMemoryTags(input: {
     };
   }
 
+  const memoryText = input.memoryText.trim().slice(0, MAX_MEMORY_TEXT_LENGTH);
+  const selectedTag = input.selectedTag?.trim() || null;
+
+  if (!memoryText) {
+    return {
+      ok: false,
+      message: "Write a short note first, then PawMemo can suggest gentle tags.",
+      suggestedTags: [],
+      careSignalCandidates: []
+    };
+  }
+
+  const quota = await enforceAIQuota({
+    ownerId: user.id,
+    feature: AI_TAG_SUGGESTION_FEATURE,
+    provider: AI_PROVIDER,
+    model: AI_TAG_SUGGESTION_MODEL
+  });
+
+  if (!quota.allowed) {
+    return {
+      ok: false,
+      message: "You've reached today's AI suggestion limit. You can still save memories manually.",
+      suggestedTags: [],
+      careSignalCandidates: []
+    };
+  }
+
   const apiKey = process.env.OPENAI_API_KEY;
 
   if (!apiKey) {
@@ -52,18 +81,6 @@ export async function suggestMemoryTags(input: {
     return {
       ok: false,
       message: "AI suggestions are not set up yet. You can keep saving memories manually.",
-      suggestedTags: [],
-      careSignalCandidates: []
-    };
-  }
-
-  const memoryText = input.memoryText.trim().slice(0, MAX_MEMORY_TEXT_LENGTH);
-  const selectedTag = input.selectedTag?.trim() || null;
-
-  if (!memoryText) {
-    return {
-      ok: false,
-      message: "Write a short note first, then PawMemo can suggest gentle tags.",
       suggestedTags: [],
       careSignalCandidates: []
     };
