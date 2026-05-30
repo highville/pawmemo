@@ -72,7 +72,7 @@ Use this checklist after every production deploy:
 - Account deletion is coming later
 - Export all memories is coming later
 - Saved reports can be printed through browser print, but there is no generated PDF file pipeline yet
-- No custom Open Graph image or app icon has been added yet
+- Basic generated app icons and Open Graph image are included; a custom illustrated brand asset can come later
 
 ## Known Issue To Monitor
 
@@ -127,7 +127,7 @@ Use this checklist after every production deploy:
 
 ## Recommended Next Phases
 
-- Phase 12A: Launch polish for custom domain, metadata, app icon, and product branding
+- Phase 12A: Launch polish for custom domain and product branding
 - Phase 12B: Production issue monitoring and error reporting plan
 - Phase 12C: Export all memories planning
 - Phase 13A: Payment planning

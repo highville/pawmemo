@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="PawMemo app icon">
+  <rect width="180" height="180" rx="42" fill="#fbf3e4"/>
+  <rect x="102" y="45" width="50" height="88" rx="14" fill="#fffaf1" stroke="#7a6044" stroke-width="8" transform="rotate(5 127 89)"/>
+  <circle cx="45" cy="72" r="14" fill="#7a6044"/>
+  <circle cx="74" cy="56" r="14" fill="#7a6044"/>
+  <circle cx="104" cy="70" r="14" fill="#7a6044"/>
+  <ellipse cx="75" cy="112" rx="28" ry="25" fill="#7a6044"/>
+</svg>
