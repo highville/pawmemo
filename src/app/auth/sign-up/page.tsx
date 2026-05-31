@@ -17,7 +17,7 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
   return (
     <AuthCard
       title="Create your memory space"
-      body="Create a private journal for quick notes, photo memories, and gentle weekly recaps."
+      body="Create a private journal for quick notes, photo memories, and gentle weekly recaps. After sign-in, you will start with one simple pet profile."
       footer={
         <>
           Already have an account?{" "}

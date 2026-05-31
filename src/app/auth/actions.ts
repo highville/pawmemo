@@ -57,5 +57,5 @@ export async function signUp(formData: FormData) {
     redirect(`/auth/sign-up?error=${encodeURIComponent(error.message)}`);
   }
 
-  redirect("/auth/sign-in?message=Account created. Please sign in to continue.");
+  redirect(`/auth/sign-in?message=${encodeURIComponent("Account created. Sign in to create your pet's memory space.")}&next=${encodeURIComponent("/onboarding")}`);
 }

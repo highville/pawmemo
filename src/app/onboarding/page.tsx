@@ -1,5 +1,6 @@
 import { ArrowRight, Camera, Cat, Dog, Heart, Smartphone } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Card, PageHeader } from "@/components/ui";
 import { createPet } from "@/app/onboarding/actions";
 import { getCurrentUser, getFirstPet } from "@/lib/app-data";
@@ -13,6 +14,11 @@ type OnboardingPageProps = {
 export default async function OnboardingPage({ searchParams }: OnboardingPageProps) {
   const params = await searchParams;
   const { user } = await getCurrentUser();
+
+  if (!user) {
+    redirect("/auth/sign-in?next=/onboarding");
+  }
+
   const existingPet = user ? await getFirstPet(user.id) : null;
 
   return (
@@ -21,21 +27,21 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
         <div className="h-full w-1/3 rounded-full bg-coral" />
       </div>
       <PageHeader
-        title="Welcome to PawMemo"
-        body="Start with one pet profile so every note, photo, and recap stays connected to the right companion."
+        title="Create your pet's memory space"
+        body="Start with just a name and pet type so every note, photo, and recap stays connected to the right companion."
       />
       <Card className="space-y-3">
         <div className="flex items-center gap-2 font-semibold text-primary">
           <Smartphone size={18} />
           Your first step
         </div>
-        <p className="text-sm leading-6 text-outline">Create a simple pet profile now. You can start saving memories right after.</p>
+        <p className="text-sm leading-6 text-outline">You can start with just the basics. Photos and more details can come later.</p>
       </Card>
       {params?.error ? <p className="rounded-2xl bg-red-50 p-4 text-sm font-semibold text-error">{params.error}</p> : null}
       {existingPet ? (
         <Card className="space-y-4 bg-primary-soft/70">
           <h2 className="font-display text-2xl font-semibold text-primary">{existingPet.name} is already set up</h2>
-          <p className="leading-7 text-outline">Your journal is ready. Keep adding quick notes and photos from Home whenever something small feels worth remembering.</p>
+          <p className="leading-7 text-outline">Your journal is ready. Keep adding quick notes and photos from Journal whenever something small feels worth remembering.</p>
           <Link href="/app" className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90">
             Go to journal <ArrowRight size={18} />
           </Link>
@@ -44,7 +50,7 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
       <form action={createPet} className="flex flex-1 flex-col gap-7">
         <label className="space-y-2">
           <span className="text-sm font-semibold text-outline">Pet Name</span>
-          <input name="name" className="w-full border-0 border-b border-outline/40 bg-transparent px-0 py-3 text-lg text-primary focus:border-primary focus:ring-0" defaultValue="Momo" />
+          <input name="name" required placeholder="Your pet's name" className="w-full border-0 border-b border-outline/40 bg-transparent px-0 py-3 text-lg text-primary focus:border-primary focus:ring-0" />
         </label>
         <div className="space-y-3">
           <span className="text-sm font-semibold text-outline">Pet Type</span>
