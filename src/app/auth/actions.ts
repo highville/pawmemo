@@ -45,7 +45,7 @@ export async function signUp(formData: FormData) {
 
   const supabase = await createSupabaseServerClient();
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -55,6 +55,10 @@ export async function signUp(formData: FormData) {
 
   if (error) {
     redirect(`/auth/sign-up?error=${encodeURIComponent(error.message)}`);
+  }
+
+  if (data.session) {
+    redirect("/onboarding");
   }
 
   redirect(`/auth/sign-in?message=${encodeURIComponent("Account created. Sign in to create your pet's memory space.")}&next=${encodeURIComponent("/onboarding")}`);

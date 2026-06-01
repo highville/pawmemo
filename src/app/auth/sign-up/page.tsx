@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { signUp } from "@/app/auth/actions";
 import { AuthCard } from "@/components/auth-card";
+import { getCurrentUser, getFirstPet } from "@/lib/app-data";
 import { hasSupabaseBrowserConfig } from "@/lib/supabase/config";
 
 type SignUpPageProps = {
@@ -13,6 +15,15 @@ type SignUpPageProps = {
 export default async function SignUpPage({ searchParams }: SignUpPageProps) {
   const params = await searchParams;
   const canUseAuth = hasSupabaseBrowserConfig();
+
+  if (canUseAuth) {
+    const { user } = await getCurrentUser();
+
+    if (user) {
+      const existingPet = await getFirstPet(user.id);
+      redirect(existingPet ? "/app" : "/onboarding");
+    }
+  }
 
   return (
     <AuthCard

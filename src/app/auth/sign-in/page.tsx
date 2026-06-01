@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { signIn } from "@/app/auth/actions";
 import { AuthCard } from "@/components/auth-card";
+import { getCurrentUser, getFirstPet } from "@/lib/app-data";
 import { hasSupabaseBrowserConfig } from "@/lib/supabase/config";
 
 type SignInPageProps = {
@@ -15,11 +17,25 @@ type SignInPageProps = {
 export default async function SignInPage({ searchParams }: SignInPageProps) {
   const params = await searchParams;
   const canUseAuth = hasSupabaseBrowserConfig();
+  const isFirstTimeContinue = params?.next === "/onboarding" || Boolean(params?.message?.includes("pet's memory space"));
+
+  if (canUseAuth) {
+    const { user } = await getCurrentUser();
+
+    if (user) {
+      const existingPet = await getFirstPet(user.id);
+      redirect(existingPet ? "/app" : "/onboarding");
+    }
+  }
 
   return (
     <AuthCard
-      title="Welcome back"
-      body="Sign in to continue to your private pet journal. New here? Your next step is a simple pet profile."
+      title={isFirstTimeContinue ? "Create your pet's memory space" : "Welcome back"}
+      body={
+        isFirstTimeContinue
+          ? "Sign in once more to create your first pet profile. You will start with just a name and pet type."
+          : "Sign in to continue to your private pet journal."
+      }
       footer={
         <>
           New to PawMemo?{" "}
