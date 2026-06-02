@@ -26,7 +26,7 @@ export default async function SettingsPage() {
                 <PawPrint size={34} />
               </span>
             )}
-            <button disabled className="absolute bottom-0 right-0 rounded-full bg-primary/60 p-2 text-white" aria-label="Profile photo coming later">
+            <button type="button" disabled className="absolute bottom-0 right-0 rounded-full bg-primary/60 p-2 text-white" aria-label="Profile photo coming later">
               <Edit3 size={14} />
             </button>
           </div>
@@ -63,17 +63,19 @@ export default async function SettingsPage() {
         </span>
       </div>
       <Card className="p-2">
-        <button disabled className="flex w-full cursor-not-allowed items-center gap-4 rounded-xl p-4 text-left text-outline">
+        <button type="button" disabled className="flex w-full cursor-not-allowed items-center gap-4 rounded-xl p-4 text-left text-outline">
           <Download />
           Export all memories coming later
         </button>
         <div className="mx-4 h-px bg-surface-line" />
-        <Link href="/auth/sign-out" className="flex w-full items-center gap-4 rounded-xl p-4 text-left text-primary hover:bg-surface-soft">
-          <LogOut />
-          Sign out
-        </Link>
+        <form action="/auth/sign-out" method="post">
+          <button type="submit" className="flex w-full items-center gap-4 rounded-xl p-4 text-left text-primary hover:bg-surface-soft">
+            <LogOut />
+            Sign out
+          </button>
+        </form>
         <div className="mx-4 h-px bg-surface-line" />
-        <button disabled className="flex w-full cursor-not-allowed items-center gap-4 rounded-xl p-4 text-left text-outline">
+        <button type="button" disabled className="flex w-full cursor-not-allowed items-center gap-4 rounded-xl p-4 text-left text-outline">
           <Trash2 />
           Account deletion coming later
         </button>
