@@ -12,6 +12,7 @@ const CARE_SIGNAL_TAGS: Record<string, string> = {
   "Ate less": "appetite",
   "Vet visit": "vet"
 };
+const QUICK_TAGS = new Set(["Cute moment", "First time", "Ate less", "Vet visit"]);
 
 export async function createMemory(formData: FormData) {
   const supabase = await createSupabaseServerClient();
@@ -72,7 +73,7 @@ export async function createMemory(formData: FormData) {
         {
           owner_id: user.id,
           name: tag,
-          category: "quick"
+          category: getTagCategory(tag)
         },
         { onConflict: "owner_id,name,category" }
       )
@@ -170,6 +171,10 @@ function normalizeTag(value: FormDataEntryValue | null) {
   }
 
   return tag.slice(0, 48);
+}
+
+function getTagCategory(tag: string) {
+  return QUICK_TAGS.has(tag) ? "quick" : "ai";
 }
 
 function getPhotoExtension(file: File) {

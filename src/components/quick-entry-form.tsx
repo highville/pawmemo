@@ -218,18 +218,21 @@ export function QuickEntryForm({ action, suggestAction, hasPet }: QuickEntryForm
       {suggestions.length > 0 || careSignals.length > 0 ? (
         <div className="mb-3 rounded-2xl border border-secondary-soft bg-secondary-soft/30 p-3">
           {suggestions.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {suggestions.map((tag) => (
-                <button
-                  key={tag}
-                  type="button"
-                  aria-pressed={selectedTag === tag}
-                  onClick={() => toggleTag(tag)}
-                  className="rounded-full border border-transparent bg-surface px-3 py-2 text-xs font-semibold text-secondary transition aria-pressed:border-secondary aria-pressed:bg-secondary aria-pressed:text-white"
-                >
-                  {tag}
-                </button>
-              ))}
+            <div className="space-y-2">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-outline">AI tag ideas</p>
+              <div className="flex flex-wrap gap-2">
+                {suggestions.map((tag) => (
+                  <button
+                    key={tag}
+                    type="button"
+                    aria-pressed={selectedTag === tag}
+                    onClick={() => toggleTag(tag)}
+                    className="rounded-full border border-transparent bg-surface px-3 py-2 text-xs font-semibold text-secondary transition aria-pressed:border-secondary aria-pressed:bg-secondary aria-pressed:text-white"
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
             </div>
           ) : null}
           {careSignals.length > 0 ? (

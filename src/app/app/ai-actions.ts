@@ -13,6 +13,8 @@ import { getCurrentUser } from "@/lib/app-data";
 const QUICK_TAGS = ["Cute moment", "First time", "Ate less", "Vet visit"];
 const MAX_MEMORY_TEXT_LENGTH = 1200;
 const UNSAFE_CARE_LANGUAGE = /diagnos|disease|illness|treatment|medication|emergency|infection|cancer|condition|symptom/i;
+const UNSAFE_TAG_LANGUAGE = /diagnos|disease|illness|treatment|medication|emergency|infection|cancer|condition|symptom|sick|pain|urgent/i;
+const GENERIC_TAGS = new Set(["pet", "memory", "note", "animal"]);
 
 type ParsedSuggestionPayload = {
   suggestedTags?: unknown;
@@ -99,14 +101,18 @@ export async function suggestMemoryTags(input: {
           "You suggest gentle memory tags for a private pet journaling app.",
           "Do not diagnose. Do not give medical advice. Do not infer disease.",
           "Care signal candidates must be neutral, note-based observations only, with a short type and note.",
-          "Prefer the known quick tags when appropriate: Cute moment, First time, Ate less, Vet visit.",
-          "You may suggest additional concise user-owned tag candidates when useful.",
+          "The app already has fixed manual quick tags: Cute moment, First time, Ate less, Vet visit.",
+          "Do not limit your suggestions to those quick tags.",
+          "Suggest 1 to 3 short contextual tags based on the note, ideally 1 to 3 words each.",
+          "Good examples include Playtime, New toy, Energetic, Cozy nap, Quiet day, Cuddles, Bath day, Grooming, Fluffy moment.",
+          "For care-related notes, use neutral note-based tags like Food note, Low appetite, Vet visit, or Sleepy day. Avoid scary or definitive health claims.",
+          "Avoid duplicate, empty, overly generic, personal-data, diagnosis, treatment, medication, emergency, or disease tags.",
           "Return only the requested JSON shape."
         ].join(" "),
         input: JSON.stringify({
           memoryText,
           selectedQuickTag: selectedTag,
-          knownQuickTags: QUICK_TAGS
+          manualQuickTags: QUICK_TAGS
         }),
         text: {
           format: {
@@ -119,10 +125,11 @@ export async function suggestMemoryTags(input: {
               properties: {
                 suggestedTags: {
                   type: "array",
-                  maxItems: 4,
+                  minItems: 1,
+                  maxItems: 3,
                   items: {
                     type: "string",
-                    maxLength: 48
+                    maxLength: 32
                   }
                 },
                 careSignalCandidates: {
@@ -197,10 +204,22 @@ export async function suggestMemoryTags(input: {
       ...usage
     });
 
+    const suggestedTags = normalizeTags(parsed.suggestedTags);
+    const careSignalCandidates = normalizeCareSignals(parsed.careSignalCandidates);
+
+    if (suggestedTags.length === 0) {
+      return {
+        ok: false,
+        message: "PawMemo could not find a safe tag suggestion for that note. You can still save it manually.",
+        suggestedTags: [],
+        careSignalCandidates: []
+      };
+    }
+
     return {
       ok: true,
-      suggestedTags: normalizeTags(parsed.suggestedTags),
-      careSignalCandidates: normalizeCareSignals(parsed.careSignalCandidates)
+      suggestedTags,
+      careSignalCandidates
     };
   } catch {
     await logTagSuggestionUsage({
@@ -390,14 +409,53 @@ function normalizeTags(value: unknown) {
     return [];
   }
 
-  return Array.from(
-    new Set(
-      value
-        .map((tag) => (typeof tag === "string" ? tag.trim() : ""))
-        .filter(Boolean)
-        .map((tag) => tag.slice(0, 48))
-    )
-  ).slice(0, 4);
+  const seen = new Set<string>();
+  const tags: string[] = [];
+
+  for (const rawTag of value) {
+    if (typeof rawTag !== "string") {
+      continue;
+    }
+
+    const tag = normalizeTagLabel(rawTag);
+    const key = tag.toLowerCase();
+
+    if (!tag || seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    tags.push(tag);
+
+    if (tags.length === 3) {
+      break;
+    }
+  }
+
+  return tags;
+}
+
+function normalizeTagLabel(value: string) {
+  const tag = value
+    .replace(/^#+/, "")
+    .replace(/[.!?]+$/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 32);
+
+  if (!tag || GENERIC_TAGS.has(tag.toLowerCase()) || UNSAFE_TAG_LANGUAGE.test(tag)) {
+    return "";
+  }
+
+  const words = tag.split(" ").filter(Boolean);
+
+  if (words.length > 3) {
+    return "";
+  }
+
+  return words
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
 }
 
 function normalizeCareSignals(value: unknown) {
