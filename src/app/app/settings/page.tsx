@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Download, Edit3, Home, LogOut, PawPrint, Star, Trash2 } from "lucide-react";
+import { AppShell } from "@/components/app-shell";
 import { Card, PageHeader } from "@/components/ui";
 import { getCurrentUser, getFirstPet } from "@/lib/app-data";
 
@@ -12,7 +13,7 @@ export default async function SettingsPage() {
   const email = user?.email ?? "Signed in user";
 
   return (
-    <>
+    <AppShell active="settings" petName={petName} petAvatar={petAvatar}>
       <PageHeader title="Settings" />
       <Card className="space-y-6">
         <h2 className="font-display text-2xl font-semibold text-primary">Pet Profile</h2>
@@ -80,6 +81,6 @@ export default async function SettingsPage() {
         </button>
       </Card>
       <footer className="pb-8 text-center text-sm font-semibold text-outline">PawMemo v1.0</footer>
-    </>
+    </AppShell>
   );
 }

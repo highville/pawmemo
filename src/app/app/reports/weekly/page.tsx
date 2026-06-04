@@ -1,5 +1,6 @@
 import { CalendarHeart, Camera, PenLine } from "lucide-react";
 import { generateWeeklyPawLetter } from "@/app/app/reports/weekly/actions";
+import { AppShell } from "@/components/app-shell";
 import { WeeklyLetterGenerator } from "@/components/weekly-letter-generator";
 import { ButtonLink, Card, PageHeader } from "@/components/ui";
 import { getCurrentUser, getFirstPet, getUserMemories } from "@/lib/app-data";
@@ -16,7 +17,7 @@ export default async function WeeklyLetterPage() {
   const dateRange = formatDateRange(since, new Date());
 
   return (
-    <>
+    <AppShell active="reports">
       <PageHeader
         eyebrow="Weekly Paw Letter"
         title={pet ? `A gentle week with ${pet.name}` : "A gentle weekly letter"}
@@ -84,7 +85,7 @@ export default async function WeeklyLetterPage() {
           </Card>
         </>
       ) : null}
-    </>
+    </AppShell>
   );
 }
 

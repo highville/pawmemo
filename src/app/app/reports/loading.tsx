@@ -1,8 +1,9 @@
+import { AppShell } from "@/components/app-shell";
 import { Card, PageHeader } from "@/components/ui";
 
 export default function ReportsLoading() {
   return (
-    <>
+    <AppShell active="reports" petName="your pet">
       <PageHeader title="Opening your saved letters..." body="Gathering gentle reports and summaries." />
       <div className="grid gap-4">
         {[0, 1].map((item) => (
@@ -13,6 +14,6 @@ export default function ReportsLoading() {
           </Card>
         ))}
       </div>
-    </>
+    </AppShell>
   );
 }

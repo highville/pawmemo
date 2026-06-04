@@ -1,5 +1,6 @@
 import { Search } from "lucide-react";
 import Link from "next/link";
+import { AppShell } from "@/components/app-shell";
 import { MemoryCard } from "@/components/memory-card";
 import { Card, PageHeader } from "@/components/ui";
 import { getCurrentUser, getFirstPet, getUserMemories, toAppMemory } from "@/lib/app-data";
@@ -12,7 +13,7 @@ export default async function TimelinePage() {
   const displayPetName = realPet?.name ?? "your pet";
 
   return (
-    <>
+    <AppShell active="timeline" petName={displayPetName} petAvatar={realPet?.avatar_url ?? null}>
       <PageHeader
         title="Memory Timeline"
         body={realPet ? `A chronological sanctuary of your moments with ${displayPetName}.` : "Your saved notes will live here after you create a pet profile."}
@@ -56,6 +57,6 @@ export default async function TimelinePage() {
           );
         })}
       </div>
-    </>
+    </AppShell>
   );
 }

@@ -1,8 +1,5 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { BarChart3, Home, PawPrint, Settings, ScrollText } from "lucide-react";
 
 const navItems = [
@@ -23,33 +20,15 @@ export function AppShell({
   petName?: string;
   petAvatar?: string | null;
 }) {
-  const currentActive = active ?? getActiveNavKey(usePathname());
-
   return (
     <div className="min-h-dvh bg-background pb-28">
-      <TopBar active={currentActive} petName={petName} petAvatar={petAvatar} />
+      <TopBar active={active} petName={petName} petAvatar={petAvatar} />
       <main className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-6 pt-24 md:px-12 md:pt-32">
         {children}
       </main>
-      <BottomNav active={currentActive} />
+      <BottomNav active={active} />
     </div>
   );
-}
-
-function getActiveNavKey(pathname: string | null) {
-  if (pathname?.startsWith("/app/timeline")) {
-    return "timeline";
-  }
-
-  if (pathname?.startsWith("/app/reports")) {
-    return "reports";
-  }
-
-  if (pathname?.startsWith("/app/settings")) {
-    return "settings";
-  }
-
-  return "home";
 }
 
 export function TopBar({

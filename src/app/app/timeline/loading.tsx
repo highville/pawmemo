@@ -1,8 +1,9 @@
+import { AppShell } from "@/components/app-shell";
 import { Card, PageHeader } from "@/components/ui";
 
 export default function TimelineLoading() {
   return (
-    <>
+    <AppShell active="timeline" petName="your pet">
       <PageHeader title="Opening the memory trail..." body="Gathering notes, tags, and photo moments." />
       <div className="relative space-y-6 before:absolute before:left-5 before:top-0 before:h-full before:w-px before:bg-surface-line md:before:left-1/2">
         {[0, 1, 2].map((item) => (
@@ -17,6 +18,6 @@ export default function TimelineLoading() {
           </div>
         ))}
       </div>
-    </>
+    </AppShell>
   );
 }

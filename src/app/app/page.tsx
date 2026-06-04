@@ -2,6 +2,7 @@ import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import { createMemory } from "@/app/app/actions";
 import { suggestMemoryTags } from "@/app/app/ai-actions";
+import { AppShell } from "@/components/app-shell";
 import { MemoryCard } from "@/components/memory-card";
 import { QuickEntryForm } from "@/components/quick-entry-form";
 import { Card } from "@/components/ui";
@@ -24,7 +25,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const ownerName = user?.email?.split("@")[0] ?? "there";
 
   return (
-    <>
+    <AppShell active="home" petName={displayPetName} petAvatar={realPet?.avatar_url ?? null}>
       <section className="space-y-2">
         <h1 className="font-display text-4xl font-semibold text-primary">Good morning, {ownerName}.</h1>
         <p className="text-lg text-outline">{realPet ? `What happened with ${displayPetName} today?` : "Create a pet profile to begin your private journal."}</p>
@@ -60,6 +61,6 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         ) : null}
       </div>
       <QuickEntryForm action={createMemory} suggestAction={suggestMemoryTags} hasPet={Boolean(realPet)} />
-    </>
+    </AppShell>
   );
 }
