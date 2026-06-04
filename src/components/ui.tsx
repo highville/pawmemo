@@ -8,9 +8,9 @@ type ButtonProps = ComponentProps<typeof Link> & {
 
 export function ButtonLink({ children, className = "", variant = "primary", ...props }: ButtonProps) {
   const styles = {
-    primary: "bg-primary text-white hover:opacity-90",
-    secondary: "bg-secondary-soft text-secondary hover:bg-[#cbdcaf]",
-    ghost: "border border-outline/40 text-primary hover:bg-surface-muted"
+    primary: "bg-primary text-white shadow-ambient hover:opacity-90",
+    secondary: "bg-secondary-soft text-secondary hover:bg-[#d9eab6]",
+    ghost: "border border-surface-line bg-surface/70 text-primary hover:bg-surface-soft"
   };
 
   return (
@@ -31,7 +31,7 @@ export function Card({
   className?: string;
 }) {
   return (
-    <section className={`rounded-2xl border border-surface-line bg-surface p-6 shadow-ambient ${className}`}>
+    <section className={`rounded-[2rem] border border-surface-line/80 bg-surface/90 p-6 shadow-ambient backdrop-blur-sm ${className}`}>
       {children}
     </section>
   );

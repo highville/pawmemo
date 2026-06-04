@@ -185,7 +185,7 @@ export function QuickEntryForm({ action, suggestAction, hasPet }: QuickEntryForm
   }
 
   return (
-    <form action={action} onSubmit={handleSubmit} className="sticky bottom-28 z-30 rounded-2xl border border-surface-line bg-surface/90 p-4 shadow-lift backdrop-blur md:bottom-8">
+    <form action={action} onSubmit={handleSubmit} className="sticky bottom-28 z-30 rounded-[2rem] border border-primary-soft/70 bg-surface/95 p-4 shadow-lift backdrop-blur md:bottom-8">
       <div className="hide-scrollbar mb-3 flex gap-2 overflow-x-auto">
         <input type="hidden" name="tag" value={selectedTag ?? ""} />
         {QUICK_TAGS.map((chip) => (
@@ -194,7 +194,7 @@ export function QuickEntryForm({ action, suggestAction, hasPet }: QuickEntryForm
             type="button"
             aria-pressed={selectedTag === chip}
             onClick={() => toggleTag(chip)}
-            className="whitespace-nowrap rounded-full border border-surface-line bg-background px-4 py-2 text-xs font-semibold text-primary transition aria-pressed:border-secondary aria-pressed:bg-secondary-soft aria-pressed:text-secondary"
+            className="whitespace-nowrap rounded-full border border-surface-line bg-background/80 px-4 py-2 text-xs font-semibold text-primary transition aria-pressed:border-secondary aria-pressed:bg-secondary-soft aria-pressed:text-secondary"
           >
             {chip}
           </button>
@@ -246,12 +246,12 @@ export function QuickEntryForm({ action, suggestAction, hasPet }: QuickEntryForm
         </div>
       ) : null}
       <div className="flex items-center gap-3">
-        <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-surface-muted px-3 py-3 text-xs font-semibold text-primary" aria-label="Add photo">
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary-soft/70 px-3 py-3 text-xs font-semibold text-primary" aria-label="Add photo">
           <ImagePlus size={20} />
           <span className="hidden sm:inline">Add photo</span>
           <input ref={fileInputRef} name="photo" type="file" accept="image/jpeg,image/png,image/webp" disabled={!hasPet} onChange={handlePhotoChange} className="sr-only" />
         </label>
-        <input ref={bodyInputRef} name="body" disabled={!hasPet} className="min-w-0 flex-1 border-0 border-b border-outline/40 bg-transparent px-0 py-3 focus:border-primary focus:ring-0 disabled:opacity-50" placeholder={hasPet ? "Share a moment..." : "Create a pet first"} />
+        <input ref={bodyInputRef} name="body" disabled={!hasPet} className="min-w-0 flex-1 border-0 border-b border-primary-muted/60 bg-transparent px-0 py-3 focus:border-primary focus:ring-0 disabled:opacity-50" placeholder={hasPet ? "Share a little moment..." : "Create a pet first"} />
         <button type="button" onClick={handleSuggestTags} disabled={!hasPet || isSuggestionPending} className="rounded-full bg-secondary-soft p-3 text-secondary disabled:opacity-50" aria-label={isSuggestionPending ? "Suggesting tags" : "Suggest tags"}>
           {isSuggestionPending ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
         </button>

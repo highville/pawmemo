@@ -41,13 +41,13 @@ export function TopBar({
   petAvatar?: string | null;
 }) {
   return (
-    <header className="fixed inset-x-0 top-0 z-40 border-b border-transparent bg-background/75 px-6 py-3 backdrop-blur-xl">
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-surface-line/50 bg-background/80 px-6 py-3 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between">
         <Link href="/app" className="flex items-center gap-3">
           {petAvatar ? (
             <Image src={petAvatar} alt={`${petName} avatar`} width={40} height={40} className="h-10 w-10 rounded-full object-cover" />
           ) : (
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-soft text-primary">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-soft text-primary shadow-ambient">
               <PawPrint size={19} />
             </span>
           )}
@@ -64,7 +64,7 @@ export function TopBar({
 
 function DesktopNav({ active }: { active?: string }) {
   return (
-    <nav className="hidden items-center gap-1 rounded-full border border-surface-line bg-surface/70 p-1 shadow-ambient md:flex" aria-label="App navigation">
+    <nav className="hidden items-center gap-1 rounded-full border border-surface-line/80 bg-surface/75 p-1 shadow-ambient backdrop-blur-xl md:flex" aria-label="App navigation">
       {navItems.map((item) => {
         const Icon = item.icon;
         const isActive = active === item.key;
@@ -75,7 +75,7 @@ function DesktopNav({ active }: { active?: string }) {
             href={item.href}
             aria-current={isActive ? "page" : undefined}
             className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
-              isActive ? "bg-secondary-soft text-secondary" : "text-outline hover:bg-surface-muted hover:text-primary"
+              isActive ? "bg-primary-soft text-primary shadow-ambient" : "text-outline hover:bg-surface-soft hover:text-primary"
             }`}
           >
             <Icon size={16} strokeWidth={isActive ? 2.6 : 2} />
@@ -89,7 +89,7 @@ function DesktopNav({ active }: { active?: string }) {
 
 function BottomNav({ active }: { active?: string }) {
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-surface-line bg-surface/90 px-3 pb-6 pt-3 backdrop-blur-xl md:hidden" aria-label="App navigation">
+    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-surface-line/80 bg-surface/95 px-3 pb-6 pt-3 shadow-[0_-14px_35px_rgba(121,82,52,0.08)] backdrop-blur-xl md:hidden" aria-label="App navigation">
       <ul className="mx-auto flex max-w-md items-center justify-around">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -103,7 +103,7 @@ function BottomNav({ active }: { active?: string }) {
                   isActive ? "text-primary" : "text-outline"
                 }`}
               >
-                <span className={`flex h-8 w-14 items-center justify-center rounded-full ${isActive ? "bg-secondary-soft text-secondary" : ""}`}>
+                <span className={`flex h-8 w-14 items-center justify-center rounded-full ${isActive ? "bg-primary-soft text-primary" : ""}`}>
                   <Icon size={20} strokeWidth={isActive ? 2.6 : 2} />
                 </span>
                 {item.label}

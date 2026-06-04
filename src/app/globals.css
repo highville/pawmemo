@@ -12,13 +12,15 @@
 }
 
 html {
-  background: #fbf9f5;
+  background: #fff8ef;
 }
 
 body {
   min-height: 100dvh;
-  background: #fbf9f5;
-  color: #1b1c1a;
+  background:
+    radial-gradient(circle at top left, rgba(255, 181, 161, 0.22), transparent 32rem),
+    linear-gradient(180deg, #fff8ef 0%, #fff4e7 48%, #fffaf2 100%);
+  color: #251d17;
 }
 
 a {

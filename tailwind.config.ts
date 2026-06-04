@@ -5,29 +5,29 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#fbf9f5",
-        surface: "#ffffff",
-        "surface-soft": "#f5f3ef",
-        "surface-muted": "#efeeea",
-        "surface-line": "#e4e2de",
-        primary: "#332920",
-        "primary-soft": "#f1dfd1",
-        "primary-muted": "#d4c4b6",
-        secondary: "#566342",
-        "secondary-soft": "#d7e5bb",
-        tertiary: "#4a1d11",
-        coral: "#ffb5a1",
+        background: "#fff8ef",
+        surface: "#fffdf8",
+        "surface-soft": "#fff3e5",
+        "surface-muted": "#f7eadb",
+        "surface-line": "#ead9c5",
+        primary: "#3a2a1f",
+        "primary-soft": "#f7dcc7",
+        "primary-muted": "#d9bda6",
+        secondary: "#66744d",
+        "secondary-soft": "#e4efc8",
+        tertiary: "#8b4a35",
+        coral: "#ffad93",
         error: "#ba1a1a",
-        outline: "#7f756e",
-        ink: "#1b1c1a"
+        outline: "#7f6f61",
+        ink: "#251d17"
       },
       fontFamily: {
         display: ["var(--font-display)", "serif"],
         sans: ["var(--font-sans)", "sans-serif"]
       },
       boxShadow: {
-        ambient: "0 10px 20px rgba(74, 63, 53, 0.05)",
-        lift: "0 18px 40px rgba(74, 63, 53, 0.12)"
+        ambient: "0 12px 30px rgba(121, 82, 52, 0.07)",
+        lift: "0 22px 55px rgba(121, 82, 52, 0.16)"
       },
       borderRadius: {
         xl: "1.5rem",

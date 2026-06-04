@@ -29,7 +29,7 @@ export default async function LandingPage() {
             A private memory journal for your pet&apos;s everyday story.
           </h1>
           <p className="max-w-xl text-lg leading-8 text-outline">
-            Save quick notes, private photo memories, and gentle care observations in one quiet place. When you want a recap, PawMemo can help turn your notes into weekly letters and vet-ready summaries.
+            Keep the tiny things you do not want to lose: sleepy afternoons, new toys, funny habits, and gentle care notes. When you want a recap, PawMemo can help turn your memories into weekly letters and vet-ready summaries.
           </p>
           <ButtonLink href="/auth/sign-up">
             Start your pet&apos;s journal <ArrowRight size={18} />
@@ -66,10 +66,10 @@ export default async function LandingPage() {
         <div className="rounded-2xl border border-surface-line bg-surface-soft p-6 md:p-8">
           <div className="max-w-3xl space-y-3">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-outline">Private by design</p>
-            <h2 className="font-display text-3xl font-semibold text-primary">Your notes stay centered.</h2>
-            <p className="leading-7 text-outline">
-              PawMemo uses AI only when you ask for help with tags, letters, or summaries. Vet-ready summaries organize your saved notes for a conversation and are not a medical diagnosis.
-            </p>
+          <h2 className="font-display text-3xl font-semibold text-primary">A quiet little memory book.</h2>
+          <p className="leading-7 text-outline">
+              PawMemo uses AI only when you ask for help with tags, letters, or summaries. Your saved notes stay at the heart of the story, and vet-ready summaries organize notes for a conversation without making a medical diagnosis.
+          </p>
           </div>
         </div>
       </section>
