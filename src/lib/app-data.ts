@@ -34,6 +34,11 @@ export type AppGeneratedReport = {
   includedPhotoRecords: boolean;
 };
 
+type GeneratedReportPreviewRow = Omit<GeneratedReportRow, "content" | "model"> & {
+  content?: string;
+  model?: string | null;
+};
+
 export async function getCurrentUser() {
   const supabase = await createSupabaseServerClient();
   const {
@@ -45,7 +50,6 @@ export async function getCurrentUser() {
     return { supabase, user: null };
   }
 
-  await ensureProfile(user.id, user.email ?? null);
   return { supabase, user };
 }
 
@@ -157,7 +161,7 @@ export async function getRecentGeneratedReports(ownerId: string, limit = 5) {
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase
     .from("generated_reports")
-    .select("*")
+    .select("id, owner_id, pet_id, report_type, title, period_start, period_end, source_memory_count, source_care_signal_count, included_photo_records, created_at")
     .eq("owner_id", ownerId)
     .order("created_at", { ascending: false })
     .limit(limit);
@@ -204,13 +208,13 @@ function formatMemoryTime(value: string) {
   }).format(date);
 }
 
-function toAppGeneratedReport(report: GeneratedReportRow): AppGeneratedReport {
+function toAppGeneratedReport(report: GeneratedReportRow | GeneratedReportPreviewRow): AppGeneratedReport {
   return {
     id: report.id,
     type: report.report_type === "weekly_paw_letter" ? "Weekly Paw Letter" : "Vet-ready Summary",
     reportType: report.report_type,
     title: report.title ?? (report.report_type === "weekly_paw_letter" ? "Weekly Paw Letter" : "Vet-ready Summary"),
-    content: report.content,
+    content: report.content ?? "",
     period: formatReportPeriod(report.period_start, report.period_end),
     createdAt: formatMemoryTime(report.created_at),
     sourceMemoryCount: report.source_memory_count,

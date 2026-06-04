@@ -18,8 +18,9 @@ type HomePageProps = {
 export default async function HomePage({ searchParams }: HomePageProps) {
   const params = await searchParams;
   const { user } = await getCurrentUser();
-  const realPet = user ? await getFirstPet(user.id) : null;
-  const realMemories = user ? (await getUserMemories(user.id, 2)).map(toAppMemory) : [];
+  const [realPet, realMemories] = user
+    ? await Promise.all([getFirstPet(user.id), getUserMemories(user.id, 2).then((memories) => memories.map(toAppMemory))])
+    : [null, []];
   const displayPetName = realPet?.name ?? "your pet";
   const ownerName = user?.email?.split("@")[0] ?? "there";
 

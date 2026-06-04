@@ -7,8 +7,9 @@ import { getCurrentUser, getFirstPet, getUserMemories, toAppMemory } from "@/lib
 
 export default async function TimelinePage() {
   const { user } = await getCurrentUser();
-  const realPet = user ? await getFirstPet(user.id) : null;
-  const realMemories = user ? (await getUserMemories(user.id)).map(toAppMemory) : [];
+  const [realPet, realMemories] = user
+    ? await Promise.all([getFirstPet(user.id), getUserMemories(user.id).then((memories) => memories.map(toAppMemory))])
+    : [null, []];
   const displayPetName = realPet?.name ?? "your pet";
 
   return (
