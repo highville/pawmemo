@@ -91,24 +91,23 @@ export async function getUserMemories(ownerId: string, limit?: number) {
     return [];
   }
 
-  const { data: assets, error } = await supabase
-    .from("memory_assets")
-    .select("*")
-    .eq("owner_id", ownerId)
-    .in(
-      "memory_id",
-      memories.map((memory) => memory.id)
-    )
-    .order("created_at", { ascending: true });
+  const memoryIds = memories.map((memory) => memory.id);
+  const [assetsResult, memoryTagsResult] = await Promise.all([
+    supabase
+      .from("memory_assets")
+      .select("memory_id, storage_bucket, storage_path")
+      .eq("owner_id", ownerId)
+      .in("memory_id", memoryIds)
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("memory_tags")
+      .select("memory_id, tag_id")
+      .eq("owner_id", ownerId)
+      .in("memory_id", memoryIds)
+  ]);
 
-  const { data: memoryTags } = await supabase
-    .from("memory_tags")
-    .select("memory_id, tag_id")
-    .eq("owner_id", ownerId)
-    .in(
-      "memory_id",
-      memories.map((memory) => memory.id)
-    );
+  const assets = assetsResult.data;
+  const memoryTags = memoryTagsResult.data;
 
   const tagIds = Array.from(new Set((memoryTags ?? []).map((tag) => tag.tag_id)));
   const { data: tags } = tagIds.length
@@ -129,7 +128,7 @@ export async function getUserMemories(ownerId: string, limit?: number) {
   }
 
   const signedUrls = new Map<string, string>();
-  if (!error && assets?.length) {
+  if (!assetsResult.error && assets?.length) {
     await Promise.all(
       assets.map(async (asset) => {
         if (signedUrls.has(asset.memory_id)) {
