@@ -1,8 +1,20 @@
 import Image from "next/image";
+import { redirect } from "next/navigation";
 import { ArrowRight, Camera, HeartPulse, Lock, NotebookPen, ScrollText } from "lucide-react";
 import { ButtonLink, Card } from "@/components/ui";
+import { getCurrentUser, getFirstPet } from "@/lib/app-data";
+import { hasSupabaseBrowserConfig } from "@/lib/supabase/config";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  if (hasSupabaseBrowserConfig()) {
+    const { user } = await getCurrentUser();
+
+    if (user) {
+      const pet = await getFirstPet(user.id);
+      redirect(pet ? "/app" : "/onboarding");
+    }
+  }
+
   return (
     <main className="min-h-dvh bg-background">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">

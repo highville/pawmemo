@@ -71,13 +71,19 @@ export async function getFirstPet(ownerId: string) {
   return data;
 }
 
-export async function getUserMemories(ownerId: string) {
+export async function getUserMemories(ownerId: string, limit?: number) {
   const supabase = await createSupabaseServerClient();
-  const { data } = await supabase
+  let query = supabase
     .from("memories")
     .select("*")
     .eq("owner_id", ownerId)
     .order("occurred_at", { ascending: false });
+
+  if (limit) {
+    query = query.limit(limit);
+  }
+
+  const { data } = await query;
 
   const memories = data ?? [];
 
