@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { PawPrint } from "lucide-react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/supabase/types";
@@ -39,7 +40,7 @@ type GeneratedReportPreviewRow = Omit<GeneratedReportRow, "content" | "model"> &
   model?: string | null;
 };
 
-export async function getCurrentUser() {
+export const getCurrentUser = cache(async function getCurrentUser() {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -51,7 +52,7 @@ export async function getCurrentUser() {
   }
 
   return { supabase, user };
-}
+});
 
 export async function ensureProfile(userId: string, email: string | null) {
   const supabase = await createSupabaseServerClient();
@@ -62,7 +63,7 @@ export async function ensureProfile(userId: string, email: string | null) {
     .upsert({ id: userId, display_name: displayName }, { onConflict: "id" });
 }
 
-export async function getFirstPet(ownerId: string) {
+export const getFirstPet = cache(async function getFirstPet(ownerId: string) {
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase
     .from("pets")
@@ -73,7 +74,7 @@ export async function getFirstPet(ownerId: string) {
     .maybeSingle();
 
   return data;
-}
+});
 
 export async function getUserMemories(ownerId: string, limit?: number) {
   const supabase = await createSupabaseServerClient();

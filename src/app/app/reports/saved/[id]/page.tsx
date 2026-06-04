@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { ArrowLeft, Camera, ClipboardList, FileText, Mail } from "lucide-react";
 import { deleteSavedReport } from "@/app/app/reports/saved/[id]/actions";
-import { AppShell } from "@/components/app-shell";
 import { CopyReportButton } from "@/components/copy-report-button";
 import { DeleteReportButton } from "@/components/delete-report-button";
 import { PrintReportButton } from "@/components/print-report-button";
 import { Card, PageHeader } from "@/components/ui";
-import { getCurrentUser, getFirstPet, getGeneratedReport } from "@/lib/app-data";
+import { getCurrentUser, getGeneratedReport } from "@/lib/app-data";
 
 type SavedReportPageProps = {
   params: Promise<{
@@ -17,12 +16,11 @@ type SavedReportPageProps = {
 export default async function SavedReportPage({ params }: SavedReportPageProps) {
   const { id } = await params;
   const { user } = await getCurrentUser();
-  const pet = user ? await getFirstPet(user.id) : null;
   const report = user ? await getGeneratedReport(user.id, id) : null;
   const deleteAction = deleteSavedReport.bind(null, id);
 
   return (
-    <AppShell active="reports" petName={pet?.name ?? "your pet"} petAvatar={pet?.avatar_url ?? null}>
+    <>
       <Link href="/app/reports" className="print-hide inline-flex w-fit items-center gap-2 text-sm font-semibold text-outline transition hover:text-primary">
         <ArrowLeft size={16} />
         Back to reports
@@ -98,6 +96,6 @@ export default async function SavedReportPage({ params }: SavedReportPageProps) 
           </Card>
         </>
       )}
-    </AppShell>
+    </>
   );
 }

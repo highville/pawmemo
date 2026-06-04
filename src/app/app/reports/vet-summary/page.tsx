@@ -1,6 +1,5 @@
 import { Activity, Camera, ClipboardList } from "lucide-react";
 import { generateVetReadySummary } from "@/app/app/reports/vet-summary/actions";
-import { AppShell } from "@/components/app-shell";
 import { VetSummaryGenerator } from "@/components/vet-summary-generator";
 import { ButtonLink, Card, PageHeader } from "@/components/ui";
 import { getCurrentUser, getFirstPet, getUserMemories } from "@/lib/app-data";
@@ -24,7 +23,7 @@ export default async function VetSummaryPage() {
   const dateRange = formatDateRange(since, new Date());
 
   return (
-    <AppShell active="reports">
+    <>
       <PageHeader
         eyebrow="Vet-ready Summary"
         title={pet ? `Notes for ${pet.name}'s vet` : "Vet-ready Summary"}
@@ -96,7 +95,7 @@ export default async function VetSummaryPage() {
           </Card>
         </>
       ) : null}
-    </AppShell>
+    </>
   );
 }
 
