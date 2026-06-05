@@ -34,6 +34,9 @@ export default async function LandingPage() {
           <ButtonLink href="/auth/sign-up">
             Start your pet&apos;s journal <ArrowRight size={18} />
           </ButtonLink>
+          <ButtonLink href="/try" variant="ghost">
+            Try a sample memory
+          </ButtonLink>
         </div>
         <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-lift">
           <Image
